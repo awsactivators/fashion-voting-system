@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "b/Kq8GpSX70=",
+  "dgSpecHash": "pYmrBKE8MPg=",
   "success": true,
-  "projectFilePath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/FashionVote.csproj",
+  "projectFilePath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/FashionVote.csproj",
   "expectedPackageFiles": [
     "/Users/Genevieve/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/microsoft.aspnetcore.cryptography.internal/8.0.8/microsoft.aspnetcore.cryptography.internal.8.0.8.nupkg.sha512",

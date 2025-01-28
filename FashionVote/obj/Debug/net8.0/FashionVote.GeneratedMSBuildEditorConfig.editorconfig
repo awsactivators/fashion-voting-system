@@ -9,95 +9,95 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = FashionVote
 build_property.RootNamespace = FashionVote
-build_property.ProjectDir = /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/
+build_property.ProjectDir = /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote
+build_property.MSBuildProjectDirectory = /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote
 build_property._RazorSourceGeneratorDebug = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Areas/Identity/Pages/_ViewStart.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Areas/Identity/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Designers/Create.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Designers/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVzaWduZXJzL0NyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Designers/Delete.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Designers/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVzaWduZXJzL0RlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Designers/Edit.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Designers/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVzaWduZXJzL0VkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Designers/Index.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Designers/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGVzaWduZXJzL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Home/Index.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Home/Privacy.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Participants/Create.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Participants/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFydGljaXBhbnRzL0NyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Participants/Delete.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Participants/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFydGljaXBhbnRzL0RlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Participants/Edit.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Participants/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFydGljaXBhbnRzL0VkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Participants/Index.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Participants/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUGFydGljaXBhbnRzL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shared/Error.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shared/_LoginPartial.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shared/_ValidationScriptsPartial.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shows/Create.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shows/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hvd3MvQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shows/Delete.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shows/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hvd3MvRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shows/Edit.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shows/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hvd3MvRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shows/Index.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shows/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hvd3MvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/_ViewImports.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/_ViewStart.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/Views/Shared/_Layout.cshtml]
+[/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-ls9gbb8chb

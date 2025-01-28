@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/FashionVote.csproj": {}
+    "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/FashionVote.csproj": {}
   },
   "projects": {
-    "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/FashionVote.csproj": {
+    "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/FashionVote.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/FashionVote.csproj",
+        "projectUniqueName": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/FashionVote.csproj",
         "projectName": "FashionVote",
-        "projectPath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/FashionVote.csproj",
+        "projectPath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/FashionVote.csproj",
         "packagesPath": "/Users/Genevieve/.nuget/packages/",
-        "outputPath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/obj/",
+        "outputPath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/Genevieve/.nuget/NuGet/NuGet.Config"
