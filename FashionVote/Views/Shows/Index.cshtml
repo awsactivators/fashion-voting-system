@@ -1,0 +1,38 @@
+@model IEnumerable<FashionVote.Models.Show>
+
+@{
+    ViewData["Title"] = "Shows List";
+}
+
+<h1>Shows</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Show</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Show Name</th>
+            <th>Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var show in Model)
+        {
+            <tr>
+                <td>@show.ShowName</td>
+                <td>@show.Location</td>
+                <td>@show.StartTime.ToString("g")</td>
+                <td>@show.EndTime.ToString("g")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

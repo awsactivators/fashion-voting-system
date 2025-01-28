@@ -1,0 +1,36 @@
+@model IEnumerable<FashionVote.Models.Participant>
+
+@{
+    ViewData["Title"] = "Participants List";
+}
+
+<h1>Participants</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Participant</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var participant in Model)
+        {
+            <tr>
+                <td>@participant.Name</td>
+                <td>@participant.Email</td>
+                <td>@participant.RegisteredAt.ToString("g")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@participant.ParticipantId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@participant.ParticipantId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,21 @@
+@model FashionVote.Models.Participant
+
+@{
+    ViewData["Title"] = "Add Participant";
+}
+
+<h1>Add Participant</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

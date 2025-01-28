@@ -1,0 +1,23 @@
+@model FashionVote.Models.Show
+
+@{
+    ViewData["Title"] = "Delete Show";
+}
+
+<h1>Delete Show</h1>
+
+<div>
+    <h3>Are you sure you want to delete this show?</h3>
+    <div>
+        <strong>Name:</strong> @Model.ShowName<br />
+        <strong>Location:</strong> @Model.Location<br />
+        <strong>Start Time:</strong> @Model.StartTime.ToString("g")<br />
+        <strong>End Time:</strong> @Model.EndTime.ToString("g")
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="ShowId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

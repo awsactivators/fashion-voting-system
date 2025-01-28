@@ -1,0 +1,22 @@
+@model FashionVote.Models.Participant
+
+@{
+    ViewData["Title"] = "Edit Participant";
+}
+
+<h1>Edit Participant</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ParticipantId" />
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
