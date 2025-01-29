@@ -5,7 +5,9 @@ namespace FashionVote.Models
     public int ParticipantId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
-    public DateTime RegisteredAt { get; set; }
+    // public DateTime RegisteredAt { get; set; }
+    public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
+
     public ICollection<ParticipantShow> ParticipantShows { get; set; }
   }
 

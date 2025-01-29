@@ -28,6 +28,13 @@ else
     app.UseHsts();
 }
 
+// Add HTTPS redirection middleware
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

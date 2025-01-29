@@ -59,8 +59,10 @@ namespace FashionVote.Controllers
             {
                 _context.Add(participant);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Participant added successfully!";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["ErrorMessage"] = "Failed to add participant. Please check the inputs.";
             return View(participant);
         }
 

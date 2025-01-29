@@ -138,7 +138,6 @@
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/backend2-http5226/passion-project/FashionVote/obj/Debug/net8.0/ref/FashionVote.dll
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/appsettings.Development.json
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/appsettings.json
-/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/app.db
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/FashionVote.staticwebassets.runtime.json
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/FashionVote
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/FashionVote.deps.json
@@ -275,3 +274,4 @@
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/obj/Debug/net8.0/FashionVote.pdb
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/obj/Debug/net8.0/FashionVote.genruntimeconfig.cache
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/obj/Debug/net8.0/ref/FashionVote.dll
+/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/app.db
