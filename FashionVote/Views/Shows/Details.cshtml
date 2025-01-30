@@ -1,0 +1,76 @@
+@model FashionVote.Models.Show
+
+@{
+    ViewData["Title"] = "Show Details";
+}
+
+<h1>@Model.ShowName</h1>
+<p><strong>Location:</strong> @Model.Location</p>
+<p><strong>Start Time:</strong> @Model.StartTime.ToString("g")</p>
+<p><strong>End Time:</strong> @Model.EndTime.ToString("g")</p>
+
+<hr />
+
+<!-- ✅ Display the Designers Attending the Show -->
+<h3>Designers Attending</h3>
+@if (Model.DesignerShows != null && Model.DesignerShows.Any())
+{
+    <ul>
+        @foreach (var designerShow in Model.DesignerShows)
+        {
+            <li>@designerShow.Designer.Name - @designerShow.Designer.Category</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No designers assigned to this show yet.</p>
+}
+
+<hr />
+
+<!-- ✅ Display the Participants Attending the Show -->
+<h3>Participants Attending</h3>
+@if (Model.Participants != null && Model.Participants.Any())
+{
+    <ul>
+        @foreach (var participant in Model.Participants)
+        {
+            <li>@participant.Name (@participant.Email)</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No participants registered for this show yet.</p>
+}
+
+<hr />
+
+<!-- ✅ Voting Form (For Participants to Vote for a Designer) -->
+<h3>Vote for Your Favorite Designer</h3>
+@if (Model.DesignerShows != null && Model.DesignerShows.Any())
+{
+    <form asp-action="Vote" method="post">
+        <input type="hidden" name="ShowId" value="@Model.ShowId" />
+
+        @foreach (var designerShow in Model.DesignerShows)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="DesignerId" value="@designerShow.Designer.DesignerId" required>
+                <label class="form-check-label">@designerShow.Designer.Name - @designerShow.Designer.Category</label>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-primary mt-3">Submit Vote</button>
+    </form>
+}
+else
+{
+    <p>No designers available for voting.</p>
+}
+
+<hr />
+
+<!-- ✅ Back Button -->
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

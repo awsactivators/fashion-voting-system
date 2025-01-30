@@ -1,0 +1,25 @@
+@model FashionVote.Models.Show
+@{
+    ViewData["Title"] = "Designers in " + Model.ShowName;
+}
+
+<h1>Designers in @Model.ShowName</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var designerShow in Model.DesignerShows)
+        {
+            <tr>
+                <td>@designerShow.Designer.Name</td>
+                <td>@designerShow.Designer.Category</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Index" class="btn btn-secondary">Back to Shows</a>

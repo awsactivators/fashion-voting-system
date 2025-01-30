@@ -31,7 +31,7 @@ else
 // Add HTTPS redirection middleware
 if (!app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection();
+    // app.UseHttpsRedirection();
     app.UseHsts();
 }
 

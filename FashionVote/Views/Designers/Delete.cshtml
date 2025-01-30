@@ -6,17 +6,37 @@
 
 <h1>Delete Designer</h1>
 
-<div>
-    <h3>Are you sure you want to delete this designer?</h3>
-    <div>
-        <strong>Name:</strong> @Model.Name<br />
-        <strong>Category:</strong> @Model.Category<br />
-        <strong>Created At:</strong> @Model.CreatedAt.ToString("g")
-    </div>
-
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="DesignerId" />
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </form>
+<div class="alert alert-warning">
+    <h4>Are you sure you want to delete this designer?</h4>
 </div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text"><strong>Category:</strong> @Model.Category</p>
+
+        <!-- ✅ Display Shows the Designer is Participating In -->
+        <h6>Participating Shows:</h6>
+        <ul>
+            @if (Model.DesignerShows != null && Model.DesignerShows.Any())
+            {
+                @foreach (var ds in Model.DesignerShows)
+                {
+                    <li>@ds.Show.ShowName (@ds.Show.Location)</li>
+                }
+            }
+            else
+            {
+                <span class="text-muted">No shows assigned</span>
+            }
+        </ul>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="DesignerId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+

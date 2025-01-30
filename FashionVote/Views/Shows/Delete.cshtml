@@ -1,5 +1,4 @@
 @model FashionVote.Models.Show
-
 @{
     ViewData["Title"] = "Delete Show";
 }
@@ -12,7 +11,7 @@
         <strong>Name:</strong> @Model.ShowName<br />
         <strong>Location:</strong> @Model.Location<br />
         <strong>Start Time:</strong> @Model.StartTime.ToString("g")<br />
-        <strong>End Time:</strong> @Model.EndTime.ToString("g")
+        <strong>End Time:</strong> @Model.EndTime.ToString("g")<br />
     </div>
 
     <form asp-action="Delete" method="post">

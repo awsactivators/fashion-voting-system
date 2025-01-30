@@ -1,5 +1,4 @@
 @model FashionVote.Models.Participant
-
 @{
     ViewData["Title"] = "Delete Participant";
 }
@@ -11,7 +10,8 @@
     <div>
         <strong>Name:</strong> @Model.Name<br />
         <strong>Email:</strong> @Model.Email<br />
-        <strong>Registered At:</strong> @Model.RegisteredAt.ToString("g")
+        <strong>Registered At:</strong> @Model.RegisteredAt.ToString("g")<br />
+        <strong>Show:</strong> @Model.Show?.ShowName
     </div>
 
     <form asp-action="Delete" method="post">

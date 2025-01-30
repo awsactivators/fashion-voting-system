@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace FashionVote.Data.Migrations
+namespace FashionVote.Migrations
 {
     /// <inheritdoc />
-    public partial class ModifiedTime : Migration
+    public partial class RemoveDescriptionFromShow : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace FashionVote.Data.Migrations
+namespace FashionVote.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250125205146_AddIdentitySupport")]
-    partial class AddIdentitySupport
+    [Migration("20250129231704_ModifiedDesigner")]
+    partial class ModifiedDesigner
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,24 +74,14 @@ namespace FashionVote.Data.Migrations
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ParticipantId");
-
-                    b.ToTable("Participants");
-                });
-
-            modelBuilder.Entity("FashionVote.Models.ParticipantShow", b =>
-                {
-                    b.Property<int>("ParticipantId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ShowId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ParticipantId", "ShowId");
+                    b.HasKey("ParticipantId");
 
                     b.HasIndex("ShowId");
 
-                    b.ToTable("ParticipantShows");
+                    b.ToTable("Participants");
                 });
 
             modelBuilder.Entity("FashionVote.Models.Show", b =>
@@ -121,6 +111,35 @@ namespace FashionVote.Data.Migrations
                     b.HasKey("ShowId");
 
                     b.ToTable("Shows");
+                });
+
+            modelBuilder.Entity("FashionVote.Models.Vote", b =>
+                {
+                    b.Property<int>("VoteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DesignerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ParticipantId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ShowId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("VotedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("VoteId");
+
+                    b.HasIndex("DesignerId");
+
+                    b.HasIndex("ParticipantId");
+
+                    b.HasIndex("ShowId");
+
+                    b.ToTable("Votes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -338,19 +357,38 @@ namespace FashionVote.Data.Migrations
                     b.Navigation("Show");
                 });
 
-            modelBuilder.Entity("FashionVote.Models.ParticipantShow", b =>
+            modelBuilder.Entity("FashionVote.Models.Participant", b =>
                 {
+                    b.HasOne("FashionVote.Models.Show", "Show")
+                        .WithMany("Participants")
+                        .HasForeignKey("ShowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Show");
+                });
+
+            modelBuilder.Entity("FashionVote.Models.Vote", b =>
+                {
+                    b.HasOne("FashionVote.Models.Designer", "Designer")
+                        .WithMany("Votes")
+                        .HasForeignKey("DesignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FashionVote.Models.Participant", "Participant")
-                        .WithMany("ParticipantShows")
+                        .WithMany("Votes")
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FashionVote.Models.Show", "Show")
-                        .WithMany("ParticipantShows")
+                        .WithMany("Votes")
                         .HasForeignKey("ShowId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Designer");
 
                     b.Navigation("Participant");
 
@@ -411,18 +449,22 @@ namespace FashionVote.Data.Migrations
             modelBuilder.Entity("FashionVote.Models.Designer", b =>
                 {
                     b.Navigation("DesignerShows");
+
+                    b.Navigation("Votes");
                 });
 
             modelBuilder.Entity("FashionVote.Models.Participant", b =>
                 {
-                    b.Navigation("ParticipantShows");
+                    b.Navigation("Votes");
                 });
 
             modelBuilder.Entity("FashionVote.Models.Show", b =>
                 {
                     b.Navigation("DesignerShows");
 
-                    b.Navigation("ParticipantShows");
+                    b.Navigation("Participants");
+
+                    b.Navigation("Votes");
                 });
 #pragma warning restore 612, 618
         }

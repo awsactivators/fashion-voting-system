@@ -6,17 +6,40 @@
 
 <h1>Add Designer</h1>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label for="Name">Name</label>
-        <input asp-for="Name" class="form-control" />
+        <label asp-for="Name">Name</label>
+        <input asp-for="Name" class="form-control" required />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="Category">Category</label>
-        <input asp-for="Category" class="form-control" />
+        <label asp-for="Category">Category</label>
+        <input asp-for="Category" class="form-control" required />
         <span asp-validation-for="Category" class="text-danger"></span>
     </div>
+
+    <!-- ✅ Select Shows to Assign the Designer -->
+    <div class="form-group">
+        <label>Assign to Shows</label>
+        <select name="SelectedShowIds" multiple class="form-control">
+            @foreach (var show in ViewBag.Shows)
+            {
+                <option value="@show.ShowId">@show.ShowName - @show.Location</option>
+            }
+        </select>
+    </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>

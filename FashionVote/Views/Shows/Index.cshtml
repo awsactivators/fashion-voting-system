@@ -1,10 +1,18 @@
 @model IEnumerable<FashionVote.Models.Show>
-
 @{
     ViewData["Title"] = "Shows List";
 }
 
 <h1>Shows</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Add Show</a>
@@ -17,6 +25,8 @@
             <th>Location</th>
             <th>Start Time</th>
             <th>End Time</th>
+            <th>Participants</th>
+            <th>Designers</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -29,10 +39,17 @@
                 <td>@show.StartTime.ToString("g")</td>
                 <td>@show.EndTime.ToString("g")</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger">Delete</a>
+                    <a asp-action="ParticipantsInShow" asp-route-id="@show.ShowId" class="btn btn-info btn-sm">View Participants</a>
+                </td>
+                <td>
+                    <a asp-action="DesignersInShow" asp-route-id="@show.ShowId" class="btn btn-warning btn-sm">View Designers</a>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
