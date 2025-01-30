@@ -332,17 +332,35 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
+        // public async Task<IActionResult> Details(int id)
+        // {
+        //     var show = await _context.Shows
+        //         .Include(s => s.Participants)
+        //         .Include(s => s.DesignerShows)
+        //             .ThenInclude(ds => ds.Designer)
+        //         .FirstOrDefaultAsync(s => s.ShowId == id);
+
+        //     if (show == null) return NotFound();
+        //     return View(show);
+        // }
+
         public async Task<IActionResult> Details(int id)
         {
             var show = await _context.Shows
-                .Include(s => s.Participants)
                 .Include(s => s.DesignerShows)
                     .ThenInclude(ds => ds.Designer)
+                .Include(s => s.Participants)
+                .Include(s => s.Votes) // ✅ Include votes
                 .FirstOrDefaultAsync(s => s.ShowId == id);
 
-            if (show == null) return NotFound();
+            if (show == null)
+            {
+                return NotFound();
+            }
+
             return View(show);
         }
+
 
     }
 }

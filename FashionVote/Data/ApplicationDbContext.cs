@@ -53,6 +53,11 @@ namespace FashionVote.Data
                 .HasOne(v => v.Show)
                 .WithMany(s => s.Votes)
                 .HasForeignKey(v => v.ShowId);
+            
+            // Prevent duplicate votes: One vote per participant-designer-show
+            modelBuilder.Entity<Vote>()
+                .HasIndex(v => new { v.ParticipantId, v.DesignerId, v.ShowId })
+                .IsUnique();
         }
     }
 }

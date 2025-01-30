@@ -47,28 +47,40 @@ else
 
 <hr />
 
-<!-- ✅ Voting Form (For Participants to Vote for a Designer) -->
-<h3>Vote for Your Favorite Designer</h3>
+<!-- ✅ Voting Form (Now with Multiple Selection) -->
+<h3>Vote for Your Favorite Designers</h3>
+
 @if (Model.DesignerShows != null && Model.DesignerShows.Any())
 {
-    <form asp-action="Vote" method="post">
-        <input type="hidden" name="ShowId" value="@Model.ShowId" />
+    <form asp-controller="Votes" asp-action="Vote" method="post">
+        <input type="hidden" name="showId" value="@Model.ShowId" />
+        <input type="hidden" name="participantId" value="1" /> <!-- Replace 1 with actual participant ID -->
 
         @foreach (var designerShow in Model.DesignerShows)
         {
+            var hasVoted = Model.Votes != null && Model.Votes.Any(v => v.ParticipantId == 1 && v.DesignerId == designerShow.Designer.DesignerId); // Replace 1 with actual participant ID
+
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="DesignerId" value="@designerShow.Designer.DesignerId" required>
-                <label class="form-check-label">@designerShow.Designer.Name - @designerShow.Designer.Category</label>
+                <input class="form-check-input" type="checkbox" name="designerIds" value="@designerShow.Designer.DesignerId" @(hasVoted ? "disabled" : "")>
+                <label class="form-check-label">
+                    @designerShow.Designer.Name - @designerShow.Designer.Category
+                    @if (hasVoted)
+                    {
+                        <span class="badge badge-success">✔️ Voted</span> 
+                    }
+                </label>
             </div>
         }
 
-        <button type="submit" class="btn btn-primary mt-3">Submit Vote</button>
+        <button type="submit" class="btn btn-primary mt-3" @(Model.Votes.Any(v => v.ParticipantId == 1) ? "disabled" : "")>Submit Vote</button>
     </form>
 }
 else
 {
     <p>No designers available for voting.</p>
 }
+
+
 
 <hr />
 
