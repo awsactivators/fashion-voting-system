@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FashionVote.Data;
 using FashionVote.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FashionVote.Controllers
 {
@@ -31,18 +32,26 @@ namespace FashionVote.Controllers
         /// Displays the form to create a new participant.
         /// </summary>
         // ✅ GET: Participants/Create (Show form with Show dropdown)
+        // public IActionResult Create()
+        // {
+        //     var shows = _context.Shows.ToList();
+        //     if (shows == null || !shows.Any())
+        //     {
+        //         TempData["ErrorMessage"] = "No available shows. Please create a show first.";
+        //         return RedirectToAction("Index");
+        //     }
+
+        //     ViewBag.Shows = new SelectList(shows, "ShowId", "ShowName");
+        //     return View();
+        // }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            var shows = _context.Shows.ToList();
-            if (shows == null || !shows.Any())
-            {
-                TempData["ErrorMessage"] = "No available shows. Please create a show first.";
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.Shows = new SelectList(shows, "ShowId", "ShowName");
-            return View();
+            TempData["ErrorMessage"] = "Participants must register themselves.";
+            return RedirectToAction("Index");
         }
+
 
 
 

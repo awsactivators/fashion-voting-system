@@ -3,7 +3,10 @@
     ViewData["Title"] = "Upcoming Shows";
 }
 
-<h1>Upcoming Shows</h1>
+<h1>Welcome to Fashion Voting System</h1>
+<p>View our Upcoming Fashion shows, for you to be able to attend a show and vote your favorite designer during the show you will have to register or Login if you are a registered user, then register for a show.</p>
+
+<h2>Upcoming Shows</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -39,9 +42,9 @@
                     @if (!User.Identity.IsAuthenticated)
                     {
                         <!-- ✅ Redirect Public Users to Login -->
-                        <a asp-controller="Account" asp-action="Login"
-                           asp-route-returnUrl="@Url.Action("Register", "Shows", new { showId = show.ShowId })"
-                           class="btn btn-primary btn-sm">Register</a>
+                        <a asp-area="Identity" asp-page="/Account/Register"
+                            asp-route-returnUrl="@Url.Action("Register", "Shows", new { showId = show.ShowId })"
+                            class="btn btn-primary btn-sm">Register</a>
                     }
                     else if (User.IsInRole("Participant"))
                     {

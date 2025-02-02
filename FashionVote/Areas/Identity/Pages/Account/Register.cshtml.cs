@@ -190,13 +190,14 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using FashionVote.Data;
+using FashionVote.Models;
 
 namespace FashionVote.Areas.Identity.Pages.Account
 {
@@ -204,7 +205,8 @@ namespace FashionVote.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;  // ✅ Role Manager
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -212,17 +214,19 @@ namespace FashionVote.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager,  // ✅ Inject Role Manager
-            IUserStore<IdentityUser> userStore,
+            RoleManager<IdentityRole> roleManager,
             SignInManager<IdentityUser> signInManager,
+            ApplicationDbContext context,
+            IUserStore<IdentityUser> userStore,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
-            _roleManager = roleManager; // ✅ Assign Role Manager
+            _roleManager = roleManager;
+            _signInManager = signInManager;
+            _context = context;
             _userStore = userStore;
             _emailStore = GetEmailStore();
-            _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -250,11 +254,6 @@ namespace FashionVote.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-            // ✅ Add Role Selection
-            [Required]
-            [Display(Name = "Register As")]
-            public string Role { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -270,25 +269,33 @@ namespace FashionVote.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                
+                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // ✅ Ensure role exists before assignment
-                    if (!await _roleManager.RoleExistsAsync(Input.Role))
+                    // ✅ Ensure "Participant" role exists before assignment
+                    if (!await _roleManager.RoleExistsAsync("Participant"))
                     {
-                        await _roleManager.CreateAsync(new IdentityRole(Input.Role));
+                        await _roleManager.CreateAsync(new IdentityRole("Participant"));
                     }
 
-                    // ✅ Assign role to the user
-                    await _userManager.AddToRoleAsync(user, Input.Role);
-                    _logger.LogInformation($"Assigned role '{Input.Role}' to user {Input.Email}");
+                    // ✅ Assign "Participant" Role to the User
+                    await _userManager.AddToRoleAsync(user, "Participant");
+                    _logger.LogInformation($"Assigned role 'Participant' to user {Input.Email}");
+
+                    // ✅ Add User to Participants Table
+                    var participant = new Participant
+                    {
+                        Email = Input.Email,
+                        Name = Input.Email.Split('@')[0], // Default name to first part of email
+                        RegisteredAt = DateTime.UtcNow
+                    };
+
+                    _context.Participants.Add(participant);
+                    await _context.SaveChangesAsync();
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -309,7 +316,7 @@ namespace FashionVote.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return LocalRedirect("~/Shows/MyShows"); // Redirect to "My Shows" after registration
                     }
                 }
 
@@ -320,19 +327,6 @@ namespace FashionVote.Areas.Identity.Pages.Account
             }
 
             return Page();
-        }
-
-        private IdentityUser CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<IdentityUser>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor.");
-            }
         }
 
         private IUserEmailStore<IdentityUser> GetEmailStore()
