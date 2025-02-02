@@ -1,0 +1,37 @@
+@model IEnumerable<FashionVote.Models.Vote>
+
+@{
+    ViewData["Title"] = "All Votes";
+}
+
+<h1>All Votes</h1>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No votes have been submitted yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Participant</th>
+                <th>Designer Voted</th>
+                <th>Show</th>
+                <th>Vote Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vote in Model)
+            {
+                <tr>
+                    <td>@vote.Participant.Name (@vote.Participant.Email)</td>
+                    <td>@vote.Designer.Name (@vote.Designer.Category)</td>
+                    <td>@vote.Show.ShowName</td>
+                    <td>@vote.VotedAt.ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<a asp-controller="Shows" asp-action="Index" class="btn btn-secondary">Back to Shows</a>

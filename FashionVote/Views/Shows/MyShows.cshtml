@@ -1,0 +1,92 @@
+@model IEnumerable<FashionVote.Models.Show>
+
+@{
+    ViewData["Title"] = "My Registered Shows";
+}
+
+<h1 class="mb-4">My Registered Shows</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <p class="text-muted">You haven't registered for any shows yet.</p>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Show Name</th>
+                <th>Location</th>
+                <th>Start Time</th>
+                <th>Voting Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var show in Model)
+            {
+                var currentTime = DateTime.UtcNow;
+                var timeUntilStart = show.StartTime - currentTime;
+                bool isVotingOpen = currentTime >= show.StartTime && currentTime <= show.EndTime;
+
+                <tr>
+                    <td>@show.ShowName</td>
+                    <td>@show.Location</td>
+                    <td>@show.StartTime.ToString("g")</td>
+
+                    <!-- Voting Status -->
+                    <td>
+                        @if (currentTime < show.StartTime)
+                        {
+                            if (timeUntilStart.TotalMinutes < 5)
+                            {
+                                <span class="badge bg-warning" title="Voting starts soon">Voting starts soon</span>
+                            }
+                            else if (timeUntilStart.TotalHours < 1)
+                            {
+                                <span class="badge bg-warning" title="Voting starts soon">
+                                    Voting starts in @timeUntilStart.Minutes minutes
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning" title="Voting starts soon">
+                                    Voting starts in @timeUntilStart.Hours hours, @timeUntilStart.Minutes minutes
+                                </span>
+                            }
+                        }
+                        else if (currentTime > show.EndTime)
+                        {
+                            <span class="badge bg-danger">Voting Closed</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Voting Open</span>
+                        }
+                    </td>
+
+                    <!-- Actions (Vote Button) -->
+                    <td>
+                        @if (currentTime < show.StartTime)
+                        {
+                            <button class="btn btn-secondary" disabled title="Voting has not started yet">Vote Now</button>
+                        }
+                        else if (currentTime > show.EndTime)
+                        {
+                            <button class="btn btn-danger" disabled title="Voting is closed">Voting Closed</button>
+                        }
+                        else
+                        {
+                            <a asp-controller="Shows" asp-action="Details" asp-route-id="@show.ShowId" 
+                               class="btn btn-success" title="Vote for your favorite designer">
+                                Vote Now
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,9 +1,9 @@
 @model IEnumerable<FashionVote.Models.Show>
 @{
-    ViewData["Title"] = "Shows List";
+    ViewData["Title"] = "Upcoming Shows";
 }
 
-<h1>Shows</h1>
+<h1>Upcoming Shows</h1>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -14,10 +14,6 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add Show</a>
-</p>
-
 <table class="table">
     <thead>
         <tr>
@@ -25,32 +21,58 @@
             <th>Location</th>
             <th>Start Time</th>
             <th>End Time</th>
-            @* <th>Participants</th>
-            <th>Designers</th> *@
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var show in Model)
         {
+            var currentTime = DateTime.UtcNow;
+            bool isVotingOpen = currentTime >= show.StartTime && currentTime <= show.EndTime;
+
             <tr>
                 <td>@show.ShowName</td>
                 <td>@show.Location</td>
                 <td>@show.StartTime.ToString("g")</td>
                 <td>@show.EndTime.ToString("g")</td>
-                @* <td>
-                    <a asp-action="ParticipantsInShow" asp-route-id="@show.ShowId" class="btn btn-info btn-sm">View Participants</a>
-                </td>
                 <td>
-                    <a asp-action="DesignersInShow" asp-route-id="@show.ShowId" class="btn btn-warning btn-sm">View Designers</a>
-                </td> *@
-                <td>
-                    <a asp-action="Details" asp-route-id="@show.ShowId" class="btn btn-info btn-sm">Vote</a>
-                    <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <!-- ✅ Redirect Public Users to Login -->
+                        <a asp-controller="Account" asp-action="Login"
+                           asp-route-returnUrl="@Url.Action("Register", "Shows", new { showId = show.ShowId })"
+                           class="btn btn-primary btn-sm">Register</a>
+                    }
+                    else if (User.IsInRole("Participant"))
+                    {
+                        @if (currentTime < show.StartTime)
+                        {
+                            <a asp-action="Register" asp-route-showId="@show.ShowId" class="btn btn-primary btn-sm">Register</a>
+                        }
+                        else if (currentTime > show.EndTime)
+                        {
+                            <span class="badge bg-danger">Voting Closed</span>
+                        }
+                        else
+                        {
+                            <a asp-action="Vote" asp-route-showId="@show.ShowId" class="btn btn-success btn-sm">Vote</a>
+                        }
+                    }
+                    else if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Details" asp-route-id="@show.ShowId" class="btn btn-info btn-sm">View</a>
+                        <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Add Show</a>
+    </p>
+}

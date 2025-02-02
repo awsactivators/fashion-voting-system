@@ -20,21 +20,36 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @* <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li> *@
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Participants" asp-action="Index">Participants</a>
+                            <a class="nav-link" asp-area="" asp-controller="Shows" asp-action="Index">Upcoming Shows</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Designers" asp-action="Index">Designers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Shows" asp-action="Index">Shows</a>
-                        </li>
+
+                        @if (User.IsInRole("Participant"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Shows" asp-action="MyShows">My Shows</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Admin Panel
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Shows" asp-action="AdminIndex">Manage Shows</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Participants" asp-action="Index">Manage Participants</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Designers" asp-action="Index">Manage Designers</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Votes" asp-action="Index">View Votes</a></li>
+                                </ul>
+                            </li>
+                        }
+                            
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FashionVote")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c0c910626c964feea1b011186a456ac5b6a2b50")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae691266747ea01f827e399521e14127a520fea3")]
 [assembly: System.Reflection.AssemblyProductAttribute("FashionVote")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FashionVote")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

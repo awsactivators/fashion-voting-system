@@ -1,0 +1,29 @@
+@model FashionVote.Models.Designer
+
+@{
+    ViewData["Title"] = "Designer Details";
+}
+
+<h1>@Model.Name</h1>
+<p><strong>Category:</strong> @Model.Category</p>
+<p><strong>Created At:</strong> @Model.CreatedAt.ToString("g")</p>
+
+<hr />
+
+<!-- ✅ Display Shows the Designer is Participating In -->
+<h3>Shows Participating In</h3>
+@if (Model.DesignerShows.Any())
+{
+    <ul>
+        @foreach (var ds in Model.DesignerShows)
+        {
+            <li>@ds.Show.ShowName (@ds.Show.Location)</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No shows assigned.</p>
+}
+
+<a asp-action="Index" class="btn btn-secondary">Back to Designers</a>

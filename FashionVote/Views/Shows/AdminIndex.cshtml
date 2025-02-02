@@ -1,0 +1,47 @@
+@model IEnumerable<FashionVote.Models.Show>
+@{
+    ViewData["Title"] = "Manage Shows";
+}
+
+<h1>Manage Shows</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Show</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Show Name</th>
+            <th>Location</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var show in Model)
+        {
+            <tr>
+                <td>@show.ShowName</td>
+                <td>@show.Location</td>
+                <td>@show.StartTime.ToString("g")</td>
+                <td>@show.EndTime.ToString("g")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-action="Votes" asp-route-id="@show.ShowId" class="btn btn-info btn-sm">View Votes</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

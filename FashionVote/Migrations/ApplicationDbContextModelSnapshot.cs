@@ -71,7 +71,8 @@ namespace FashionVote.Migrations
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ShowId")
+                    b.Property<int?>("ShowId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ParticipantId");
@@ -128,9 +129,10 @@ namespace FashionVote.Migrations
 
                     b.HasIndex("DesignerId");
 
-                    b.HasIndex("ParticipantId");
-
                     b.HasIndex("ShowId");
+
+                    b.HasIndex("ParticipantId", "DesignerId", "ShowId")
+                        .IsUnique();
 
                     b.ToTable("Votes");
                 });
@@ -274,11 +276,9 @@ namespace FashionVote.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
@@ -316,11 +316,9 @@ namespace FashionVote.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
