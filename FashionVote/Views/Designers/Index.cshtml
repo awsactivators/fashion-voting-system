@@ -55,10 +55,7 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@designer.DesignerId" class="btn btn-info btn-sm">View</a>
                     <a asp-action="Edit" asp-route-id="@designer.DesignerId" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@designer.DesignerId" class="btn btn-danger btn-sm" 
-                       onclick="return confirm('Are you sure you want to delete this designer?');">
-                        Delete
-                    </a>
+                    <a asp-action="Delete" asp-route-id="@designer.DesignerId" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
