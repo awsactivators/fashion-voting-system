@@ -4,7 +4,10 @@
 }
 
 <h1>Welcome to Fashion Voting System</h1>
-<p>View our Upcoming Fashion shows, for you to be able to attend a show and vote your favorite designer during the show you will have to register or Login if you are a registered user, then register for a show.</p>
+<p>
+    View our upcoming fashion shows! To attend a show and vote for your favorite designer during the show,
+    you must <strong>Register</strong> or <strong>Login</strong> if you're already a user, then register for a show.
+</p>
 
 <h2>Upcoming Shows</h2>
 
@@ -31,7 +34,7 @@
         @foreach (var show in Model)
         {
             var currentTime = DateTime.UtcNow;
-            bool isVotingOpen = currentTime >= show.StartTime && currentTime <= show.EndTime;
+            var isRegistered = show.ParticipantShows?.Any(ps => ps.Participant.Email == User.Identity.Name) ?? false;
 
             <tr>
                 <td>@show.ShowName</td>
@@ -41,24 +44,25 @@
                 <td>
                     @if (!User.Identity.IsAuthenticated)
                     {
-                        <!-- ✅ Redirect Public Users to Login -->
                         <a asp-area="Identity" asp-page="/Account/Register"
-                            asp-route-returnUrl="@Url.Action("Register", "Shows", new { showId = show.ShowId })"
-                            class="btn btn-primary btn-sm">Register</a>
+                           asp-route-returnUrl="@Url.Action("Register", "Shows", new { showId = show.ShowId })"
+                           class="btn btn-primary btn-sm">Register</a>
                     }
                     else if (User.IsInRole("Participant"))
                     {
-                        @if (currentTime < show.StartTime)
+                        if (DateTime.UtcNow > show.EndTime)
                         {
-                            <a asp-action="Register" asp-route-showId="@show.ShowId" class="btn btn-primary btn-sm">Register</a>
+                            <span class="badge bg-danger">Event Passed</span>
                         }
-                        else if (currentTime > show.EndTime)
+                        else if (isRegistered)
                         {
-                            <span class="badge bg-danger">Voting Closed</span>
+                            <span class="badge bg-success">Registered</span>
                         }
                         else
                         {
-                            <a asp-action="Vote" asp-route-showId="@show.ShowId" class="btn btn-success btn-sm">Vote</a>
+                            <a asp-action="Register" asp-route-showId="@show.ShowId" class="btn btn-primary btn-sm">
+                                Register
+                            </a>
                         }
                     }
                     else if (User.IsInRole("Admin"))

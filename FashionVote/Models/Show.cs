@@ -20,9 +20,9 @@ namespace FashionVote.Models
         [Required(ErrorMessage = "End time is required.")]
         public DateTime EndTime { get; set; }
 
-        // public string Description { get; set; }
 
         // ✅ Initialize Collections to Prevent Validation Errors
+        public ICollection<ParticipantShow> ParticipantShows { get; set; } = new List<ParticipantShow>();
         public ICollection<Participant> Participants { get; set; } = new List<Participant>();
         public ICollection<DesignerShow> DesignerShows { get; set; } = new List<DesignerShow>();
         public ICollection<Vote> Votes { get; set; } = new List<Vote>();

@@ -6,6 +6,16 @@
 
 <h1 class="mb-4">My Registered Shows</h1>
 
+<!-- ✅ Display Success/Error Messages Here -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
 @if (!Model.Any())
 {
     <div class="alert alert-info">
@@ -20,6 +30,7 @@ else
                 <th>Show Name</th>
                 <th>Location</th>
                 <th>Start Time</th>
+                <th>End Time</th>
                 <th>Voting Status</th>
                 <th>Actions</th>
             </tr>
@@ -35,6 +46,7 @@ else
                     <td>@show.ShowName</td>
                     <td>@show.Location</td>
                     <td>@show.StartTime.ToString("g")</td>
+                    <td>@show.EndTime.ToString("g")</td>
 
                     <!-- Voting Status -->
                     <td>
@@ -79,10 +91,11 @@ else
                         }
                         else
                         {
-                            <a asp-controller="Shows" asp-action="Details" asp-route-id="@show.ShowId" 
-                               class="btn btn-success" title="Vote for your favorite designer">
+                            <a asp-controller="Shows" asp-action="Vote" asp-route-showId="@show.ShowId"
+                              class="btn btn-success btn-sm" title="Vote for your favorite designer">
                                 Vote Now
                             </a>
+
                         }
                     </td>
                 </tr>
@@ -90,3 +103,4 @@ else
         </tbody>
     </table>
 }
+<a asp-action="Index" class="btn btn-secondary">Back to Upcoming Shows</a>

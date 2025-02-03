@@ -16,7 +16,9 @@ namespace FashionVote.Data
         public DbSet<Designer> Designers { get; set; }
         public DbSet<Show> Shows { get; set; }
         public DbSet<DesignerShow> DesignerShows { get; set; }
-        public DbSet<Vote> Votes { get; set; } // ✅ Added Vote table
+        public DbSet<Vote> Votes { get; set; } 
+        public DbSet<ParticipantShow> ParticipantShows { get; set; } 
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,6 +61,20 @@ namespace FashionVote.Data
             modelBuilder.Entity<Vote>()
                 .HasIndex(v => new { v.ParticipantId, v.DesignerId, v.ShowId })
                 .IsUnique();
+
+            // ✅ Many-to-Many Relationship for Participant and Shows
+            modelBuilder.Entity<ParticipantShow>()
+                .HasKey(ps => new { ps.ParticipantId, ps.ShowId });
+
+            modelBuilder.Entity<ParticipantShow>()
+                .HasOne(ps => ps.Participant)
+                .WithMany(p => p.ParticipantShows)
+                .HasForeignKey(ps => ps.ParticipantId);
+
+            modelBuilder.Entity<ParticipantShow>()
+                .HasOne(ps => ps.Show)
+                .WithMany(s => s.ParticipantShows)
+                .HasForeignKey(ps => ps.ShowId);
         }
     }
 }

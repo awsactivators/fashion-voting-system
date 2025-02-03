@@ -262,13 +262,21 @@ namespace FashionVote.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+       public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
+                // ✅ Check if user already exists
+                var existingUser = await _userManager.FindByEmailAsync(Input.Email);
+                if (existingUser != null)
+                {
+                    TempData["ErrorMessage"] = "You are already registered! Please log in.";
+                    return RedirectToPage("/Account/Login", new { area = "Identity" });
+                }
+
                 var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -316,7 +324,7 @@ namespace FashionVote.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect("~/Shows/MyShows"); // Redirect to "My Shows" after registration
+                        return LocalRedirect("~/Shows/MyShows"); // ✅ Redirect to "My Shows" after registration
                     }
                 }
 
@@ -328,6 +336,7 @@ namespace FashionVote.Areas.Identity.Pages.Account
 
             return Page();
         }
+
 
         private IUserEmailStore<IdentityUser> GetEmailStore()
         {

@@ -3,6 +3,7 @@ using System;
 using FashionVote.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FashionVote.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250202035009_CreateParticipantShowTable")]
+    partial class CreateParticipantShowTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -93,7 +96,7 @@ namespace FashionVote.Migrations
 
                     b.HasIndex("ShowId");
 
-                    b.ToTable("ParticipantShows");
+                    b.ToTable("ParticipantShow");
                 });
 
             modelBuilder.Entity("FashionVote.Models.Show", b =>
