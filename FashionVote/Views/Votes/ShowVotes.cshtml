@@ -1,0 +1,34 @@
+@model FashionVote.Models.Show
+
+@{
+    ViewData["Title"] = "Votes for " + Model.ShowName;
+}
+
+<h1>Votes for @Model.ShowName</h1>
+
+@if (!Model.DesignerShows.Any())
+{
+    <div class="alert alert-warning">No designers registered for this show.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Designer</th>
+                <th>Votes Received</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dv in ViewBag.DesignerVotes)
+            {
+                <tr>
+                    <td>@dv.Designer.Name (@dv.Designer.Category)</td>
+                    <td>@dv.VoteCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-action="AdminIndex" asp-controller="Shows" class="btn btn-secondary">Back to Manage Shows</a>

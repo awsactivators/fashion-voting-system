@@ -52,7 +52,7 @@ namespace FashionVote.Controllers
             return View(shows);
         }
 
-        
+
 
         // ✅ PARTICIPANT: View their registered shows
         [Authorize(Roles = "Participant")]
@@ -243,104 +243,6 @@ namespace FashionVote.Controllers
             }
             return RedirectToAction(nameof(AdminIndex));
         }
-
-
-
-        // ✅ PARTICIPANT: Vote for designers (Allowed only during show hours)
-        [Authorize(Roles = "Participant")]
-        public async Task<IActionResult> Vote(int showId)
-        {
-            var userEmail = User.Identity.Name;
-            var participant = await _context.Participants
-                .Include(p => p.ParticipantShows)
-                .ThenInclude(ps => ps.Show)
-                .FirstOrDefaultAsync(p => p.Email == userEmail);
-
-            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
-            {
-                TempData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction("MyShows");
-            }
-
-            var show = await _context.Shows
-                .Include(s => s.DesignerShows)
-                .ThenInclude(ds => ds.Designer)
-                .FirstOrDefaultAsync(s => s.ShowId == showId);
-
-            if (show == null)
-            {
-                return NotFound("Show not found.");
-            }
-
-            return View(show); // This should point to your "Vote" page
-        }
-
-
-
-        // ✅ ADMIN: View Votes for a Specific Show
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Votes(int id)
-        {
-            var show = await _context.Shows
-                .Include(s => s.Votes)
-                .ThenInclude(v => v.Participant)
-                .Include(s => s.Votes)
-                .ThenInclude(v => v.Designer)
-                .FirstOrDefaultAsync(s => s.ShowId == id);
-
-            if (show == null)
-            {
-                return NotFound("Show not found.");
-            }
-
-            return View(show);
-        }
-
-
-
-        [HttpPost]
-        [Authorize(Roles = "Participant")]
-        public async Task<IActionResult> SubmitVote(int showId, int[] designerIds)
-        {
-            var userEmail = User.Identity.Name;
-            var participant = await _context.Participants
-                .Include(p => p.ParticipantShows)
-                .FirstOrDefaultAsync(p => p.Email == userEmail);
-
-            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
-            {
-                TempData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction("MyShows");
-            }
-
-            if (designerIds == null || !designerIds.Any())
-            {
-                TempData["ErrorMessage"] = "You must select at least one designer to vote for.";
-                return RedirectToAction("Vote", new { showId });
-            }
-
-            foreach (var designerId in designerIds)
-            {
-                var existingVote = await _context.Votes
-                    .FirstOrDefaultAsync(v => v.ParticipantId == participant.ParticipantId && v.DesignerId == designerId && v.ShowId == showId);
-
-                if (existingVote == null)
-                {
-                    _context.Votes.Add(new Vote
-                    {
-                        ParticipantId = participant.ParticipantId,
-                        DesignerId = designerId,
-                        ShowId = showId,
-                        VotedAt = DateTime.UtcNow
-                    });
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Your vote has been submitted successfully!";
-            return RedirectToAction("MyShows");
-        }
-
 
 
         // ✅ ADMIN & PARTICIPANT: View Show Details

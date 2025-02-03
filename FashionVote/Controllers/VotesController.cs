@@ -34,65 +34,150 @@ namespace FashionVote.Controllers
             return View(votes);
         }
 
+        // ✅ ADMIN: View Votes for a Specific Show
+        [Authorize(Roles = "Admin")]
+        [Route("Votes/ShowVotes/{showId}")]
+        public async Task<IActionResult> ShowVotes(int showId)
+        {
+            Console.WriteLine($"🔍 Debug: Searching for Show with ID {showId}");
 
-        // ✅ PARTICIPANTS: Vote for Designers in Registered Show
+            var show = await _context.Shows
+                .Include(s => s.DesignerShows)
+                    .ThenInclude(ds => ds.Designer)
+                .Include(s => s.Votes)
+                    .ThenInclude(v => v.Designer)
+                .FirstOrDefaultAsync(s => s.ShowId == showId);
+
+            if (show == null)
+            {
+                Console.WriteLine("❌ Debug: Show Not Found!");
+                return NotFound($"Show with ID {showId} not found.");
+            }
+
+            // Get designers and vote counts
+            var designerVoteCounts = show.DesignerShows
+                .Select(ds => new
+                {
+                    Designer = ds.Designer,
+                    VoteCount = show.Votes.Count(v => v.DesignerId == ds.Designer.DesignerId)
+                })
+                .OrderByDescending(dv => dv.VoteCount)
+                .ToList();
+
+            ViewBag.DesignerVotes = designerVoteCounts;
+            return View(show);
+        }
+
+
+
+        // ✅ PARTICIPANTS: View Vote Page
         [Authorize(Roles = "Participant")]
-        [HttpPost]
-        public async Task<IActionResult> Vote(int showId, int[] designerIds)
+        public async Task<IActionResult> Vote(int showId)
         {
             var userEmail = User.Identity.Name;
-            var participant = await _context.Participants.FirstOrDefaultAsync(p => p.Email == userEmail);
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .FirstOrDefaultAsync(p => p.Email == userEmail);
 
-            if (participant == null)
+            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
             {
-                TempData["ErrorMessage"] = "Only registered participants can vote.";
+                TempData["ErrorMessage"] = "You are not registered for this show.";
                 return RedirectToAction("MyShows", "Shows");
             }
 
-            if (participant.ShowId != showId)
+            var show = await _context.Shows
+                .Include(s => s.DesignerShows)
+                .ThenInclude(ds => ds.Designer)
+                .Include(s => s.Votes)
+                .FirstOrDefaultAsync(s => s.ShowId == showId);
+
+            if (show == null)
             {
-                TempData["ErrorMessage"] = "You can only vote in the show you registered for.";
-                return RedirectToAction("MyShows", "Shows");
+                return NotFound("Show not found.");
             }
 
-            var show = await _context.Shows.FindAsync(showId);
-            if (show == null) return NotFound("Show not found.");
+            return View(show);
+        }
 
-            // ✅ Prevent Voting Outside of Show Time
-            if (DateTime.UtcNow < show.StartTime)
+        // ✅ PARTICIPANTS: Submit Votes
+        [HttpPost]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> SubmitVote(int showId, int[] designerIds)
+        {
+            var userEmail = User.Identity.Name;
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .FirstOrDefaultAsync(p => p.Email == userEmail);
+
+            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
             {
-                TempData["ErrorMessage"] = "Voting has not started yet!";
-                return RedirectToAction("MyShows", "Shows");
-            }
-            if (DateTime.UtcNow > show.EndTime)
-            {
-                TempData["ErrorMessage"] = "Voting is closed!";
-                return RedirectToAction("MyShows", "Shows");
+                ViewData["ErrorMessage"] = "You are not registered for this show.";
+                return RedirectToAction("Vote", new { showId });
             }
 
-            // ✅ Prevent Duplicate Voting
+            if (designerIds == null || !designerIds.Any())
+            {
+                ViewData["InfoMessage"] = "You have chosen not to vote for any designer.";
+                return RedirectToAction("Vote", new { showId });
+            }
+
             foreach (var designerId in designerIds)
             {
                 var existingVote = await _context.Votes
                     .FirstOrDefaultAsync(v => v.ParticipantId == participant.ParticipantId && v.DesignerId == designerId && v.ShowId == showId);
 
-                if (existingVote != null)
+                if (existingVote == null)
                 {
-                    TempData["ErrorMessage"] = "You have already voted for some designers.";
-                    return RedirectToAction("MyShows", "Shows");
+                    _context.Votes.Add(new Vote
+                    {
+                        ParticipantId = participant.ParticipantId,
+                        DesignerId = designerId,
+                        ShowId = showId,
+                        VotedAt = DateTime.UtcNow
+                    });
                 }
-
-                _context.Votes.Add(new Vote
-                {
-                    ParticipantId = participant.ParticipantId,
-                    DesignerId = designerId,
-                    ShowId = showId
-                });
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Your vote has been submitted successfully!";
-            return RedirectToAction("MyShows", "Shows");
+            ViewData["SuccessMessage"] = "Your vote has been submitted successfully!";
+            return RedirectToAction("Vote", new { showId });
         }
+
+
+        // ✅ PARTICIPANTS: Unvote
+        [HttpPost]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> Unvote(int showId, int designerId)
+        {
+            var userEmail = User.Identity.Name;
+            var participant = await _context.Participants
+                .Include(p => p.Votes)
+                .FirstOrDefaultAsync(p => p.Email == userEmail);
+
+            if (participant == null)
+            {
+                ViewData["ErrorMessage"] = "You are not registered for this show.";
+                return RedirectToAction("Vote", new { showId });
+            }
+
+            // ✅ Fetch the correct vote entry
+            var vote = await _context.Votes
+                .Where(v => v.Participant.Email == userEmail && v.ShowId == showId && v.DesignerId == designerId)
+                .FirstOrDefaultAsync();
+
+            if (vote == null)
+            {
+                ViewData["ErrorMessage"] = "No vote found to remove.";
+                return RedirectToAction("Vote", new { showId });
+            }
+
+            // ✅ Remove the vote
+            _context.Votes.Remove(vote);
+            await _context.SaveChangesAsync();
+
+            ViewData["SuccessMessage"] = "Your vote has been removed successfully!";
+            return RedirectToAction("Vote", new { showId });
+        }
+
     }
 }

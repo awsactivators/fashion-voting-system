@@ -39,7 +39,10 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
                     <a asp-action="Delete" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
-                    <a asp-action="Votes" asp-route-id="@show.ShowId" class="btn btn-info btn-sm">View Votes</a>
+                    <a asp-action="ShowVotes" asp-controller="Votes" asp-route-showId="@show.ShowId" class="btn btn-info btn-sm">
+                      View Votes
+                  </a>
+
                 </td>
             </tr>
         }
