@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace FashionVote.Controllers
 {
-    
     public class ShowsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,25 +21,26 @@ namespace FashionVote.Controllers
             _userManager = userManager;
         }
 
-        // ✅ PUBLIC: List all upcoming shows
+        /// <summary>
+        /// Lists all upcoming shows.
+        /// </summary>
+        /// <returns>Returns the Index view with upcoming shows.</returns>
+        /// <example>GET /Shows/Index</example>
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var shows = await _context.Shows
-                .Where(s => s.StartTime > DateTime.UtcNow) // Show only upcoming events
+                .Where(s => s.StartTime > DateTime.UtcNow)
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();
-
-            Console.WriteLine($"✅ Fetching {shows.Count} upcoming shows from DB.");
-            foreach (var show in shows)
-            {
-                Console.WriteLine($"Show: {show.ShowName}, Start: {show.StartTime}");
-            }
             return View(shows);
         }
 
-
-        // ✅ ADMIN: Manage all shows
+        /// <summary>
+        /// Admin dashboard for managing shows.
+        /// </summary>
+        /// <returns>Returns the AdminIndex view with all shows.</returns>
+        /// <example>GET /Shows/AdminIndex</example>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminIndex()
         {
@@ -52,18 +52,18 @@ namespace FashionVote.Controllers
             return View(shows);
         }
 
-
-
-        // ✅ PARTICIPANT: View their registered shows
+        /// <summary>
+        /// Displays the participant's registered shows.
+        /// </summary>
+        /// <returns>Returns the MyShows view with registered shows.</returns>
+        /// <example>GET /Shows/MyShows</example>
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> MyShows()
         {
             var userEmail = User.Identity.Name;
-
-            // ✅ Get the participant along with their registered shows
             var participant = await _context.Participants
-                .Include(p => p.ParticipantShows) // Include many-to-many relationship
-                .ThenInclude(ps => ps.Show) // Include the show details
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
             if (participant == null || !participant.ParticipantShows.Any())
@@ -72,23 +72,23 @@ namespace FashionVote.Controllers
                 return RedirectToAction("Index");
             }
 
-            // ✅ Extract registered shows
             var registeredShows = participant.ParticipantShows.Select(ps => ps.Show).ToList();
-
             return View(registeredShows);
         }
 
-
-
-
-        // ✅ PARTICIPANT: Register for a show
+        /// <summary>
+        /// Allows a participant to register for a show.
+        /// </summary>
+        /// <param name="showId">The ID of the show to register for.</param>
+        /// <returns>Redirects to MyShows if successful, otherwise an error message.</returns>
+        /// <example>POST /Shows/Register/5</example>
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> Register(int showId)
         {
             var userEmail = User.Identity.Name;
             var participant = await _context.Participants
-                .Include(p => p.ParticipantShows) // Ensure ParticipantShows is loaded
-                .ThenInclude(ps => ps.Show) // Ensure Show details are included
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
             if (participant == null)
@@ -97,15 +97,12 @@ namespace FashionVote.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // ✅ Check if already registered for this show
-            if (participant.ParticipantShows != null &&
-                participant.ParticipantShows.Any(ps => ps.ShowId == showId))
+            if (participant.ParticipantShows.Any(ps => ps.ShowId == showId))
             {
                 TempData["ErrorMessage"] = "You are already registered for this show.";
                 return RedirectToAction(nameof(MyShows));
             }
 
-            // ✅ Check if the show exists
             var newShow = await _context.Shows.FindAsync(showId);
             if (newShow == null)
             {
@@ -113,17 +110,13 @@ namespace FashionVote.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // ✅ Check if there is a scheduling conflict
-            if (participant.ParticipantShows != null &&
-                participant.ParticipantShows.Any(ps =>
-                    ps.Show.StartTime < newShow.EndTime && ps.Show.EndTime > newShow.StartTime))
+            if (participant.ParticipantShows.Any(ps =>
+                ps.Show.StartTime < newShow.EndTime && ps.Show.EndTime > newShow.StartTime))
             {
-                TempData["ErrorMessage"] = "You cannot register due to a scheduling conflict with another show.";
+                TempData["ErrorMessage"] = "You cannot register due to a scheduling conflict.";
                 return RedirectToAction(nameof(MyShows));
             }
 
-            // ✅ Register the participant for the show
-            participant.ParticipantShows ??= new List<ParticipantShow>(); // Initialize if null
             participant.ParticipantShows.Add(new ParticipantShow
             {
                 ParticipantId = participant.ParticipantId,
@@ -135,31 +128,29 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(MyShows));
         }
 
-
-
-        // ✅ ADMIN: Create a new show
+        /// <summary>
+        /// Displays the form to create a new show.
+        /// </summary>
+        /// <returns>Returns the Create view.</returns>
+        /// <example>GET /Shows/Create</example>
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
         {
-            if (!User.IsInRole("Admin"))
-            {
-                Console.WriteLine("❌ User is NOT an Admin!"); // Debugging
-                return RedirectToAction("Index");
-            }
-
-            Console.WriteLine("✅ User is an Admin. Loading Create Show page...");
             return View();
         }
 
-
-
+        /// <summary>
+        /// Processes the creation of a new show.
+        /// </summary>
+        /// <param name="show">The show details.</param>
+        /// <returns>Redirects to AdminIndex on success or reloads the form on failure.</returns>
+        /// <example>POST /Shows/Create</example>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Show show)
         {
-            // Convert input StartTime to UTC if necessary
             show.StartTime = show.StartTime.ToUniversalTime();
             show.EndTime = show.EndTime.ToUniversalTime();
 
@@ -184,9 +175,12 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(AdminIndex));
         }
 
-
-
-        // ✅ ADMIN: Edit a show
+        /// <summary>
+        /// Displays the form to edit a show.
+        /// </summary>
+        /// <param name="id">The ID of the show to edit.</param>
+        /// <returns>Returns the Edit view with show details.</returns>
+        /// <example>GET /Shows/Edit/5</example>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -196,8 +190,13 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
-
-
+        /// <summary>
+        /// Updates an existing show's details.
+        /// </summary>
+        /// <param name="id">The ID of the show to update.</param>
+        /// <param name="show">Updated show details.</param>
+        /// <returns>Redirects to AdminIndex on success or reloads the form on failure.</returns>
+        /// <example>POST /Shows/Edit/5</example>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -215,9 +214,12 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
-
-
-        // ✅ ADMIN: Delete a show
+        /// <summary>
+        /// Displays the delete confirmation page for a show.
+        /// </summary>
+        /// <param name="id">The ID of the show to delete.</param>
+        /// <returns>Returns the Delete view with show details.</returns>
+        /// <example>GET /Shows/Delete/5</example>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -227,8 +229,12 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
-
-
+        /// <summary>
+        /// Deletes a show from the system.
+        /// </summary>
+        /// <param name="id">The ID of the show to delete.</param>
+        /// <returns>Redirects to AdminIndex after deletion.</returns>
+        /// <example>POST /Shows/DeleteConfirmed/5</example>
         [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -243,47 +249,5 @@ namespace FashionVote.Controllers
             }
             return RedirectToAction(nameof(AdminIndex));
         }
-
-
-        // ✅ ADMIN & PARTICIPANT: View Show Details
-        [Authorize(Roles = "Admin,Participant")]
-        public async Task<IActionResult> Details(int id)
-        {
-            var show = await _context.Shows
-                .Include(s => s.DesignerShows)
-                .ThenInclude(ds => ds.Designer)
-                .Include(s => s.ParticipantShows)
-                .ThenInclude(ps => ps.Participant)
-                .FirstOrDefaultAsync(s => s.ShowId == id);
-
-            if (show == null)
-            {
-                return NotFound("Show not found.");
-            }
-
-            // Check if the user is an Admin
-            if (User.IsInRole("Admin"))
-            {
-                return View(show); // Admins can directly view the show details
-            }
-
-            // For Participants, ensure they are registered for this show
-            var userEmail = User.Identity.Name;
-            var participant = await _context.Participants
-                .Include(p => p.ParticipantShows)
-                .FirstOrDefaultAsync(p => p.Email == userEmail);
-
-            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == id))
-            {
-                TempData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction("MyShows");
-            }
-
-            return View(show); // Participants can view details only if registered
-        }
-
-
-
-
     }
 }

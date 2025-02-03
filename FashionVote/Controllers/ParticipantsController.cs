@@ -17,22 +17,26 @@ namespace FashionVote.Controllers
         }
 
         /// <summary>
-        /// Displays a list of all participants with their shows.
+        /// Displays a list of all participants along with the shows they are registered for.
         /// </summary>
+        /// <returns>Returns the Index view with a list of participants.</returns>
+        /// <example>GET /Participants/Index</example>
         public async Task<IActionResult> Index()
         {
             var participants = await _context.Participants
-                .Include(p => p.Show)  // Include Show details
-                .Include(p => p.Votes) // Include votes
+                .Include(p => p.Show)
+                .Include(p => p.Votes)
                 .ToListAsync();
+
             return View(participants);
         }
 
         /// <summary>
-        /// Displays the form to create a new participant.
+        /// Redirects to the participant index page with an error message.
+        /// Participants must register themselves.
         /// </summary>
-        // ✅ GET: Participants/Create (Show form with Show dropdown)
-
+        /// <returns>Redirects to Index with an error message.</returns>
+        /// <example>GET /Participants/Create</example>
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
@@ -40,10 +44,12 @@ namespace FashionVote.Controllers
             return RedirectToAction("Index");
         }
 
-
-
-
-        // ✅ POST: Participants/Create (Save participant with selected Show)
+        /// <summary>
+        /// Processes the creation of a participant.
+        /// </summary>
+        /// <param name="participant">The participant to be created.</param>
+        /// <returns>Redirects to Index on success or reloads the form on failure.</returns>
+        /// <example>POST /Participants/Create</example>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Participant participant)
@@ -57,7 +63,6 @@ namespace FashionVote.Controllers
 
                 TempData["ErrorMessage"] = "Validation failed: " + string.Join(", ", errors);
                 
-                // Reload the Show dropdown to prevent errors
                 ViewBag.Shows = new SelectList(await _context.Shows.ToListAsync(), "ShowId", "ShowName", participant.ShowId);
                 return View(participant);
             }
@@ -77,13 +82,12 @@ namespace FashionVote.Controllers
             }
         }
 
-
-
-
         /// <summary>
         /// Displays the form to edit a participant.
         /// </summary>
-        // [Authorize(Roles = "Admin")]
+        /// <param name="id">The ID of the participant to edit.</param>
+        /// <returns>Returns the Edit view with pre-filled participant details.</returns>
+        /// <example>GET /Participants/Edit/5</example>
         public async Task<IActionResult> Edit(int id)
         {
             var participant = await _context.Participants.FindAsync(id);
@@ -93,12 +97,14 @@ namespace FashionVote.Controllers
             return View(participant);
         }
 
-
         /// <summary>
-        /// Updates an existing participant.
+        /// Updates an existing participant's details.
         /// </summary>
+        /// <param name="id">The ID of the participant to update.</param>
+        /// <param name="participant">Updated participant details.</param>
+        /// <returns>Redirects to Index on success or reloads the form on failure.</returns>
+        /// <example>POST /Participants/Edit/5</example>
         [HttpPost]
-        // [Authorize(Roles = "Adn")]mi
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Participant participant)
         {
@@ -117,20 +123,30 @@ namespace FashionVote.Controllers
         }
 
         /// <summary>
-        /// Displays the delete confirmation page.
+        /// Displays the delete confirmation page for a participant.
         /// </summary>
+        /// <param name="id">The ID of the participant to delete.</param>
+        /// <returns>Returns the Delete view with participant details.</returns>
+        /// <example>GET /Participants/Delete/5</example>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var participant = await _context.Participants.Include(p => p.Show).FirstOrDefaultAsync(m => m.ParticipantId == id);
+
+            var participant = await _context.Participants
+                .Include(p => p.Show)
+                .FirstOrDefaultAsync(m => m.ParticipantId == id);
+
             if (participant == null) return NotFound();
 
             return View(participant);
         }
 
         /// <summary>
-        /// Deletes a participant.
+        /// Deletes a participant from the system.
         /// </summary>
+        /// <param name="id">The ID of the participant to delete.</param>
+        /// <returns>Redirects to Index after deletion.</returns>
+        /// <example>POST /Participants/DeleteConfirmed/5</example>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

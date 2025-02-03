@@ -21,7 +21,11 @@ namespace FashionVote.Controllers
             _userManager = userManager;
         }
 
-        // ✅ ADMIN: View All Votes
+        /// <summary>
+        /// Displays all votes for admin.
+        /// </summary>
+        /// <returns>Returns a view of all votes.</returns>
+        /// <example>GET /Votes/Index</example>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -34,13 +38,16 @@ namespace FashionVote.Controllers
             return View(votes);
         }
 
-        // ✅ ADMIN: View Votes for a Specific Show
+        /// <summary>
+        /// Displays votes for a specific show.
+        /// </summary>
+        /// <param name="showId">The ID of the show.</param>
+        /// <returns>Returns a view of vote counts per designer.</returns>
+        /// <example>GET /Votes/ShowVotes/5</example>
         [Authorize(Roles = "Admin")]
         [Route("Votes/ShowVotes/{showId}")]
         public async Task<IActionResult> ShowVotes(int showId)
         {
-            Console.WriteLine($"🔍 Debug: Searching for Show with ID {showId}");
-
             var show = await _context.Shows
                 .Include(s => s.DesignerShows)
                     .ThenInclude(ds => ds.Designer)
@@ -50,11 +57,9 @@ namespace FashionVote.Controllers
 
             if (show == null)
             {
-                Console.WriteLine("❌ Debug: Show Not Found!");
                 return NotFound($"Show with ID {showId} not found.");
             }
 
-            // Get designers and vote counts
             var designerVoteCounts = show.DesignerShows
                 .Select(ds => new
                 {
@@ -68,9 +73,12 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
-
-
-        // ✅ PARTICIPANTS: View Vote Page
+        /// <summary>
+        /// Displays the vote page for participants.
+        /// </summary>
+        /// <param name="showId">The ID of the show to vote in.</param>
+        /// <returns>Returns the voting page.</returns>
+        /// <example>GET /Votes/Vote/5</example>
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> Vote(int showId)
         {
@@ -99,7 +107,13 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
-        // ✅ PARTICIPANTS: Submit Votes
+        /// <summary>
+        /// Submits votes for a show.
+        /// </summary>
+        /// <param name="showId">The ID of the show being voted in.</param>
+        /// <param name="designerIds">An array of designer IDs being voted for.</param>
+        /// <returns>Redirects back to the voting page.</returns>
+        /// <example>POST /Votes/SubmitVote</example>
         [HttpPost]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> SubmitVote(int showId, int[] designerIds)
@@ -143,8 +157,13 @@ namespace FashionVote.Controllers
             return RedirectToAction("Vote", new { showId });
         }
 
-
-        // ✅ PARTICIPANTS: Unvote
+        /// <summary>
+        /// Allows participants to remove their votes.
+        /// </summary>
+        /// <param name="showId">The ID of the show.</param>
+        /// <param name="designerId">The ID of the designer whose vote is being removed.</param>
+        /// <returns>Redirects back to the voting page.</returns>
+        /// <example>POST /Votes/Unvote</example>
         [HttpPost]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> Unvote(int showId, int designerId)
@@ -160,7 +179,6 @@ namespace FashionVote.Controllers
                 return RedirectToAction("Vote", new { showId });
             }
 
-            // ✅ Fetch the correct vote entry
             var vote = await _context.Votes
                 .Where(v => v.Participant.Email == userEmail && v.ShowId == showId && v.DesignerId == designerId)
                 .FirstOrDefaultAsync();
@@ -171,13 +189,11 @@ namespace FashionVote.Controllers
                 return RedirectToAction("Vote", new { showId });
             }
 
-            // ✅ Remove the vote
             _context.Votes.Remove(vote);
             await _context.SaveChangesAsync();
 
             ViewData["SuccessMessage"] = "Your vote has been removed successfully!";
             return RedirectToAction("Vote", new { showId });
         }
-
     }
 }

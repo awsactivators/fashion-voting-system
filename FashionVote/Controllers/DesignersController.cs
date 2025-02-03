@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using FashionVote.Data;
 using FashionVote.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace FashionVote.Controllers
 {
@@ -17,24 +16,39 @@ namespace FashionVote.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Displays a list of all designers along with the shows they are participating in.
+        /// </summary>
+        /// <returns>Returns the list of designers in the Index view.</returns>
+        /// <example>GET /Designers/Index</example>
         public async Task<IActionResult> Index()
         {
             var designers = await _context.Designers
-            .Include(d => d.DesignerShows) // Ensure related data is fetched
-            .ThenInclude(ds => ds.Show) // Ensure Shows are included
-            .ToListAsync();
-        
+                .Include(d => d.DesignerShows)
+                .ThenInclude(ds => ds.Show)
+                .ToListAsync();
+
             return View(designers ?? new List<Designer>());
         }
 
-        // ✅ Display Form for Creating a Designer
+        /// <summary>
+        /// Displays the form to create a new designer and assign them to shows.
+        /// </summary>
+        /// <returns>Returns the Create view with available shows to assign.</returns>
+        /// <example>GET /Designers/Create</example>
         public async Task<IActionResult> Create()
         {
-            ViewBag.Shows = await _context.Shows.ToListAsync(); // ✅ Fetch Available Shows
+            ViewBag.Shows = await _context.Shows.ToListAsync();
             return View();
         }
 
-        // ✅ Process Designer Creation & Assign to Show
+        /// <summary>
+        /// Processes the creation of a new designer and assigns them to selected shows.
+        /// </summary>
+        /// <param name="designer">The designer to be created.</param>
+        /// <param name="SelectedShowIds">Array of show IDs to assign the designer to.</param>
+        /// <returns>Redirects to the Index view on success, or reloads the Create view on failure.</returns>
+        /// <example>POST /Designers/Create</example>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Designer designer, int[] SelectedShowIds)
@@ -48,11 +62,9 @@ namespace FashionVote.Controllers
 
             try
             {
-                // ✅ Add Designer to DB
                 _context.Add(designer);
                 await _context.SaveChangesAsync();
 
-                // ✅ Add Designer-Show relationships
                 foreach (var showId in SelectedShowIds)
                 {
                     _context.DesignerShows.Add(new DesignerShow
@@ -74,9 +86,12 @@ namespace FashionVote.Controllers
             }
         }
 
-
-
-
+        /// <summary>
+        /// Displays the form to edit an existing designer's details and assigned shows.
+        /// </summary>
+        /// <param name="id">The ID of the designer to edit.</param>
+        /// <returns>Returns the Edit view with pre-filled designer details and available shows.</returns>
+        /// <example>GET /Designers/Edit/5</example>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -88,14 +103,20 @@ namespace FashionVote.Controllers
 
             if (designer == null) return NotFound();
 
-            // Get all available shows
             ViewBag.ShowList = new MultiSelectList(_context.Shows, "ShowId", "ShowName", 
-                designer.DesignerShows.Select(ds => ds.ShowId)); // Pre-select existing shows
+                designer.DesignerShows.Select(ds => ds.ShowId));
 
             return View(designer);
         }
 
-
+        /// <summary>
+        /// Processes the update of an existing designer's details and assigned shows.
+        /// </summary>
+        /// <param name="id">The ID of the designer to update.</param>
+        /// <param name="designer">Updated designer details.</param>
+        /// <param name="SelectedShowIds">Array of updated show IDs assigned to the designer.</param>
+        /// <returns>Redirects to the Index view on success, or reloads the Edit view on failure.</returns>
+        /// <example>POST /Designers/Edit/5</example>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Designer designer, int[] SelectedShowIds)
@@ -109,10 +130,9 @@ namespace FashionVote.Controllers
                     _context.Update(designer);
                     await _context.SaveChangesAsync();
 
-                    // Handle Many-to-Many Relationship
                     var existingShows = _context.DesignerShows.Where(ds => ds.DesignerId == id);
-                    _context.DesignerShows.RemoveRange(existingShows); // Clear previous assignments
-                    
+                    _context.DesignerShows.RemoveRange(existingShows);
+
                     foreach (var showId in SelectedShowIds)
                     {
                         _context.DesignerShows.Add(new DesignerShow
@@ -139,14 +159,19 @@ namespace FashionVote.Controllers
             return View(designer);
         }
 
-
+        /// <summary>
+        /// Displays a confirmation page for deleting a designer.
+        /// </summary>
+        /// <param name="id">The ID of the designer to delete.</param>
+        /// <returns>Returns the Delete view with designer details.</returns>
+        /// <example>GET /Designers/Delete/5</example>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
             var designer = await _context.Designers
-                .Include(d => d.DesignerShows) // Include related shows
-                .ThenInclude(ds => ds.Show) // Ensure we get the Show details
+                .Include(d => d.DesignerShows)
+                .ThenInclude(ds => ds.Show)
                 .FirstOrDefaultAsync(d => d.DesignerId == id);
 
             if (designer == null) return NotFound();
@@ -154,18 +179,22 @@ namespace FashionVote.Controllers
             return View(designer);
         }
 
-
+        /// <summary>
+        /// Deletes a designer and removes associated relationships.
+        /// </summary>
+        /// <param name="id">The ID of the designer to delete.</param>
+        /// <returns>Redirects to the Index view on success.</returns>
+        /// <example>POST /Designers/DeleteConfirmed/5</example>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var designer = await _context.Designers
-                .Include(d => d.DesignerShows) // Include relationships to remove properly
+                .Include(d => d.DesignerShows)
                 .FirstOrDefaultAsync(d => d.DesignerId == id);
 
             if (designer == null) return NotFound();
 
-            // ✅ Remove related entries first
             if (designer.DesignerShows != null && designer.DesignerShows.Any())
             {
                 _context.DesignerShows.RemoveRange(designer.DesignerShows);
@@ -178,8 +207,12 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ✅ ADMIN: View Designer Details
-        [Authorize(Roles = "Admin")]
+        /// <summary>
+        /// Displays details of a specific designer, including their assigned shows.
+        /// </summary>
+        /// <param name="id">The ID of the designer to view.</param>
+        /// <returns>Returns the Details view with designer and show details.</returns>
+        /// <example>GET /Designers/Details/5</example>
         public async Task<IActionResult> Details(int id)
         {
             var designer = await _context.Designers
@@ -194,7 +227,5 @@ namespace FashionVote.Controllers
 
             return View(designer);
         }
-
-
     }
 }
