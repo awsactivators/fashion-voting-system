@@ -1,12 +1,12 @@
 @model FashionVote.Models.Show
 
 @{
-    ViewData["Title"] = "Votes for " + Model.ShowName;
+    ViewData["Title"] = "Votes for " + (Model?.ShowName ?? "Unknown Show");
 }
 
-<h1>Votes for @Model.ShowName</h1>
+<h1>Votes for @Model?.ShowName</h1>
 
-@if (!Model.DesignerShows.Any())
+@if (Model?.DesignerShows == null || !Model.DesignerShows.Any())
 {
     <div class="alert alert-warning">No designers registered for this show.</div>
 }
@@ -16,15 +16,28 @@ else
         <thead>
             <tr>
                 <th>Designer</th>
+                <th>Category</th>
                 <th>Votes Received</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var dv in ViewBag.DesignerVotes)
+            @if (ViewBag.DesignerVotes != null)
+            {
+                @foreach (FashionVote.Models.DTOs.DesignerVoteDTO dv in ViewBag.DesignerVotes)
+                {
+                    <tr>
+                        <td>@dv.DesignerName</td>
+                        <td>@dv.Category</td>
+                        <td>@dv.VoteCount</td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@dv.Designer.Name (@dv.Designer.Category)</td>
-                    <td>@dv.VoteCount</td>
+                    <td colspan="3" class="text-center text-muted">
+                        No votes have been recorded for this show.
+                    </td>
                 </tr>
             }
         </tbody>

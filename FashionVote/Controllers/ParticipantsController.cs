@@ -4,9 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using FashionVote.Data;
 using FashionVote.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using FashionVote.Models.DTOs;
+using FashionVote.DTOs;
 
 namespace FashionVote.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("Participants")]
     public class ParticipantsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,83 +26,43 @@ namespace FashionVote.Controllers
         }
 
         /// <summary>
-        /// Displays a list of all participants along with the shows they are registered for.
+        /// Retrieves a list of all participants and their registered shows.
         /// </summary>
-        /// <returns>Returns the Index view with a list of participants.</returns>
-        /// <example>GET /Participants/Index</example>
+        /// <returns>Returns JSON (API) or the Index view.</returns>
+        /// <example>GET /api/participants</example>
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var participants = await _context.Participants
-                .Include(p => p.Show)
-                .Include(p => p.Votes)
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
                 .ToListAsync();
 
-            return View(participants);
+            var participantDTOs = participants.Select(p => new ParticipantDTO(p)).ToList();
+
+            return Request.Headers["Accept"] == "application/json" ? Ok(participantDTOs) : View(participants);
         }
 
-        /// <summary>
-        /// Redirects to the participant index page with an error message.
-        /// Participants must register themselves.
-        /// </summary>
-        /// <returns>Redirects to Index with an error message.</returns>
-        /// <example>GET /Participants/Create</example>
-        [Authorize(Roles = "Admin")]
-        public IActionResult Create()
-        {
-            TempData["ErrorMessage"] = "Participants must register themselves.";
-            return RedirectToAction("Index");
-        }
 
         /// <summary>
-        /// Processes the creation of a participant.
-        /// </summary>
-        /// <param name="participant">The participant to be created.</param>
-        /// <returns>Redirects to Index on success or reloads the form on failure.</returns>
-        /// <example>POST /Participants/Create</example>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Participant participant)
-        {
-            Console.WriteLine("Received ShowId: " + participant.ShowId);
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                            .Select(e => e.ErrorMessage)
-                                            .ToList();
-
-                TempData["ErrorMessage"] = "Validation failed: " + string.Join(", ", errors);
-                
-                ViewBag.Shows = new SelectList(await _context.Shows.ToListAsync(), "ShowId", "ShowName", participant.ShowId);
-                return View(participant);
-            }
-
-            try
-            {
-                _context.Add(participant);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Participant added successfully!";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Error saving participant: " + ex.Message;
-                ViewBag.Shows = new SelectList(await _context.Shows.ToListAsync(), "ShowId", "ShowName", participant.ShowId);
-                return View(participant);
-            }
-        }
-
-        /// <summary>
-        /// Displays the form to edit a participant.
+        /// Displays the edit form for an existing participant.
         /// </summary>
         /// <param name="id">The ID of the participant to edit.</param>
-        /// <returns>Returns the Edit view with pre-filled participant details.</returns>
-        /// <example>GET /Participants/Edit/5</example>
+        /// <returns>Returns the Edit view with prefilled data.</returns>
+        /// <example>GET /participants/edit/5</example>
+        [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var participant = await _context.Participants.FindAsync(id);
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
+                .FirstOrDefaultAsync(p => p.ParticipantId == id);
+
             if (participant == null) return NotFound();
 
-            ViewBag.Shows = new SelectList(_context.Shows, "ShowId", "ShowName", participant.ShowId);
+            ViewBag.ShowList = new MultiSelectList(_context.Shows, "ShowId", "ShowName",
+                participant.ParticipantShows.Select(ps => ps.ShowId));
+
             return View(participant);
         }
 
@@ -101,61 +70,118 @@ namespace FashionVote.Controllers
         /// Updates an existing participant's details.
         /// </summary>
         /// <param name="id">The ID of the participant to update.</param>
-        /// <param name="participant">Updated participant details.</param>
-        /// <returns>Redirects to Index on success or reloads the form on failure.</returns>
-        /// <example>POST /Participants/Edit/5</example>
-        [HttpPost]
+        /// <param name="participantDto">Updated participant details.</param>
+        /// <returns>Returns JSON response for API or redirects to Index for Razor views.</returns>
+        /// <example>PUT /api/participants/edit/5</example>
+        [HttpPut("edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Participant participant)
+        public async Task<IActionResult> Edit(int id, [FromForm] ParticipantUpdateDTO participantDto)
         {
-            if (id != participant.ParticipantId) return NotFound();
+            if (id != participantDto.ParticipantId) return BadRequest("ID mismatch.");
 
-            if (ModelState.IsValid)
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .FirstOrDefaultAsync(p => p.ParticipantId == id);
+
+            if (participant == null) return NotFound("Participant not found.");
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
             {
-                _context.Update(participant);
+                participant.Name = participantDto.Name;
+                participant.Email = participantDto.Email;
+
+                _context.ParticipantShows.RemoveRange(participant.ParticipantShows);
+
+                foreach (var showId in participantDto.SelectedShowIds ?? new int[0])
+                {
+                    _context.ParticipantShows.Add(new ParticipantShow
+                    {
+                        ParticipantId = participant.ParticipantId,
+                        ShowId = showId
+                    });
+                }
+
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Participant updated successfully!";
-                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Participants.Any(p => p.ParticipantId == id)) return NotFound();
+                throw;
             }
 
-            ViewBag.Shows = new SelectList(_context.Shows, "ShowId", "ShowName", participant.ShowId);
-            return View(participant);
+            return Request.Headers["Accept"] == "application/json"
+                ? Ok(new { message = "Participant updated successfully!" })
+                : RedirectToAction(nameof(Index));
         }
 
         /// <summary>
         /// Displays the delete confirmation page for a participant.
         /// </summary>
-        /// <param name="id">The ID of the participant to delete.</param>
-        /// <returns>Returns the Delete view with participant details.</returns>
-        /// <example>GET /Participants/Delete/5</example>
-        public async Task<IActionResult> Delete(int? id)
+        /// <param name="id">The ID of the participant.</param>
+        /// <returns>Returns the Delete view.</returns>
+        /// <example>GET /participants/delete/5</example>
+        [HttpGet("delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound();
-
             var participant = await _context.Participants
-                .Include(p => p.Show)
-                .FirstOrDefaultAsync(m => m.ParticipantId == id);
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
+                .FirstOrDefaultAsync(p => p.ParticipantId == id);
 
             if (participant == null) return NotFound();
 
-            return View(participant);
+            return Request.Headers["Accept"] == "application/json"
+                ? Ok(new ParticipantDTO(participant))
+                : View(participant);
         }
 
         /// <summary>
-        /// Deletes a participant from the system.
+        /// Deletes a participant.
+        /// </summary>
+        /// <param name="id">The ID of the participant.</param>
+        /// <returns>Returns JSON response or redirects to Index.</returns>
+        /// <example>DELETE /api/participants/5</example>
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteApi(int id)
+        {
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .FirstOrDefaultAsync(p => p.ParticipantId == id);
+
+            if (participant == null) return NotFound(new { message = "Participant not found." });
+
+            _context.ParticipantShows.RemoveRange(participant.ParticipantShows);
+            _context.Participants.Remove(participant);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Participant deleted successfully." });
+        }
+
+        /// <summary>
+        /// Confirms and deletes a participant (for Razor Views).
         /// </summary>
         /// <param name="id">The ID of the participant to delete.</param>
         /// <returns>Redirects to Index after deletion.</returns>
-        /// <example>POST /Participants/DeleteConfirmed/5</example>
+        /// <example>POST /participants/deleteconfirmed/5</example>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var participant = await _context.Participants.FindAsync(id);
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .FirstOrDefaultAsync(p => p.ParticipantId == id);
+
+            if (participant == null) return NotFound();
+
+            _context.ParticipantShows.RemoveRange(participant.ParticipantShows);
             _context.Participants.Remove(participant);
             await _context.SaveChangesAsync();
+
             TempData["SuccessMessage"] = "Participant deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

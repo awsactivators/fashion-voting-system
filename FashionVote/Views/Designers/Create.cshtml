@@ -16,7 +16,7 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
-<form asp-action="Create" method="post">
+<form asp-controller="Designers" asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name">Name</label>
         <input asp-for="Name" class="form-control" required />

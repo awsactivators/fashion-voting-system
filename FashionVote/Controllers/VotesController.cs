@@ -7,9 +7,16 @@ using FashionVote.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using FashionVote.Models.DTOs;
+using FashionVote.DTOs;
 
 namespace FashionVote.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("Votes")]
     public class VotesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,10 +29,11 @@ namespace FashionVote.Controllers
         }
 
         /// <summary>
-        /// Displays all votes for admin.
+        /// Gets all votes for admin.
         /// </summary>
-        /// <returns>Returns a view of all votes.</returns>
-        /// <example>GET /Votes/Index</example>
+        /// <returns>Returns JSON (API) or Razor View.</returns>
+        /// <example>GET /api/Votes</example>
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -35,7 +43,9 @@ namespace FashionVote.Controllers
                 .Include(v => v.Show)
                 .ToListAsync();
 
-            return View(votes);
+            var voteDTOs = votes.Select(v => new VoteDTO(v)).ToList();
+
+            return Request.Headers["Accept"] == "application/json" ? Ok(voteDTOs) : View(votes);
         }
 
         /// <summary>
@@ -45,14 +55,13 @@ namespace FashionVote.Controllers
         /// <returns>Returns a view of vote counts per designer.</returns>
         /// <example>GET /Votes/ShowVotes/5</example>
         [Authorize(Roles = "Admin")]
-        [Route("Votes/ShowVotes/{showId}")]
+        [HttpGet("ShowVotes/{showId}")]
         public async Task<IActionResult> ShowVotes(int showId)
         {
             var show = await _context.Shows
                 .Include(s => s.DesignerShows)
                     .ThenInclude(ds => ds.Designer)
                 .Include(s => s.Votes)
-                    .ThenInclude(v => v.Designer)
                 .FirstOrDefaultAsync(s => s.ShowId == showId);
 
             if (show == null)
@@ -60,10 +69,12 @@ namespace FashionVote.Controllers
                 return NotFound($"Show with ID {showId} not found.");
             }
 
+            // ✅ Create a strongly-typed DTO instead of an anonymous type
             var designerVoteCounts = show.DesignerShows
-                .Select(ds => new
+                .Select(ds => new DesignerVoteDTO
                 {
-                    Designer = ds.Designer,
+                    DesignerName = ds.Designer.Name,
+                    Category = ds.Designer.Category,
                     VoteCount = show.Votes.Count(v => v.DesignerId == ds.Designer.DesignerId)
                 })
                 .OrderByDescending(dv => dv.VoteCount)
@@ -73,12 +84,15 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
+
+
         /// <summary>
-        /// Displays the vote page for participants.
+        /// Loads the voting page.
         /// </summary>
-        /// <param name="showId">The ID of the show to vote in.</param>
-        /// <returns>Returns the voting page.</returns>
-        /// <example>GET /Votes/Vote/5</example>
+        /// <param name="showId">Show ID.</param>
+        /// <returns>Returns voting page.</returns>
+        /// <example>GET /api/Votes/Vote/5</example>
+        [HttpGet("Vote/{showId}")]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> Vote(int showId)
         {
@@ -88,57 +102,42 @@ namespace FashionVote.Controllers
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
             if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
-            {
-                TempData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction("MyShows", "Shows");
-            }
+                return Unauthorized("You are not registered for this show.");
 
             var show = await _context.Shows
-                .Include(s => s.DesignerShows)
-                .ThenInclude(ds => ds.Designer)
+                .Include(s => s.DesignerShows).ThenInclude(ds => ds.Designer)
                 .Include(s => s.Votes)
                 .FirstOrDefaultAsync(s => s.ShowId == showId);
 
-            if (show == null)
-            {
-                return NotFound("Show not found.");
-            }
-
-            return View(show);
+            return show == null ? NotFound("Show not found.") : View(show);
         }
 
         /// <summary>
         /// Submits votes for a show.
         /// </summary>
-        /// <param name="showId">The ID of the show being voted in.</param>
-        /// <param name="designerIds">An array of designer IDs being voted for.</param>
-        /// <returns>Redirects back to the voting page.</returns>
-        /// <example>POST /Votes/SubmitVote</example>
-        [HttpPost]
+        /// <param name="voteDto">Vote submission DTO.</param>
+        /// <returns>Returns success or failure response.</returns>
+        /// <example>POST /api/Votes/SubmitVote</example>
+        [HttpPost("SubmitVote")]
         [Authorize(Roles = "Participant")]
-        public async Task<IActionResult> SubmitVote(int showId, int[] designerIds)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitVote([FromForm] VoteSubmissionDTO voteDto)
         {
             var userEmail = User.Identity.Name;
             var participant = await _context.Participants
                 .Include(p => p.ParticipantShows)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
-            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
-            {
-                ViewData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction("Vote", new { showId });
-            }
+            if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == voteDto.ShowId))
+                return Unauthorized("You are not registered for this show.");
 
-            if (designerIds == null || !designerIds.Any())
-            {
-                ViewData["InfoMessage"] = "You have chosen not to vote for any designer.";
-                return RedirectToAction("Vote", new { showId });
-            }
+            if (voteDto.DesignerIds == null || !voteDto.DesignerIds.Any())
+                return BadRequest("You must select at least one designer to vote for.");
 
-            foreach (var designerId in designerIds)
+            foreach (var designerId in voteDto.DesignerIds)
             {
                 var existingVote = await _context.Votes
-                    .FirstOrDefaultAsync(v => v.ParticipantId == participant.ParticipantId && v.DesignerId == designerId && v.ShowId == showId);
+                    .FirstOrDefaultAsync(v => v.ParticipantId == participant.ParticipantId && v.DesignerId == designerId && v.ShowId == voteDto.ShowId);
 
                 if (existingVote == null)
                 {
@@ -146,54 +145,50 @@ namespace FashionVote.Controllers
                     {
                         ParticipantId = participant.ParticipantId,
                         DesignerId = designerId,
-                        ShowId = showId,
+                        ShowId = voteDto.ShowId,
                         VotedAt = DateTime.UtcNow
                     });
                 }
             }
 
             await _context.SaveChangesAsync();
-            ViewData["SuccessMessage"] = "Your vote has been submitted successfully!";
-            return RedirectToAction("Vote", new { showId });
+
+            return Request.Headers["Accept"] == "application/json"
+                ? Ok(new { message = "Vote submitted successfully!" })
+                : RedirectToAction("Vote", new { showId = voteDto.ShowId });
         }
 
         /// <summary>
         /// Allows participants to remove their votes.
         /// </summary>
-        /// <param name="showId">The ID of the show.</param>
-        /// <param name="designerId">The ID of the designer whose vote is being removed.</param>
-        /// <returns>Redirects back to the voting page.</returns>
-        /// <example>POST /Votes/Unvote</example>
-        [HttpPost]
+        /// <param name="voteDto">Vote removal DTO.</param>
+        /// <returns>Returns success or failure response.</returns>
+        /// <example>POST /api/Votes/Unvote</example>
+        [HttpPost("Unvote")]
         [Authorize(Roles = "Participant")]
-        public async Task<IActionResult> Unvote(int showId, int designerId)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unvote([FromForm] VoteRemovalDTO voteDto)
         {
             var userEmail = User.Identity.Name;
             var participant = await _context.Participants
                 .Include(p => p.Votes)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
-            if (participant == null)
-            {
-                ViewData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction("Vote", new { showId });
-            }
+            if (participant == null) return Unauthorized("You are not registered for this show.");
 
             var vote = await _context.Votes
-                .Where(v => v.Participant.Email == userEmail && v.ShowId == showId && v.DesignerId == designerId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(v => v.ParticipantId == participant.ParticipantId &&
+                                          v.ShowId == voteDto.ShowId &&
+                                          v.DesignerId == voteDto.DesignerId);
 
-            if (vote == null)
-            {
-                ViewData["ErrorMessage"] = "No vote found to remove.";
-                return RedirectToAction("Vote", new { showId });
-            }
+            if (vote == null) return NotFound("No vote found to remove.");
 
             _context.Votes.Remove(vote);
             await _context.SaveChangesAsync();
 
-            ViewData["SuccessMessage"] = "Your vote has been removed successfully!";
-            return RedirectToAction("Vote", new { showId });
+            return Request.Headers["Accept"] == "application/json"
+                ? Ok(new { message = "Vote removed successfully!" })
+                : RedirectToAction("Vote", new { showId = voteDto.ShowId });
         }
     }
 }
