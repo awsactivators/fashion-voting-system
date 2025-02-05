@@ -1,6 +1,7 @@
 using System;
+using FashionVote.Models;
 
-namespace FashionVote.Models.DTOs
+namespace FashionVote.DTOs
 {
     public class ShowDto
     {
@@ -10,7 +11,6 @@ namespace FashionVote.Models.DTOs
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-        // ✅ Constructor to map Show entity to DTO
         public ShowDto(Show show)
         {
             ShowId = show.ShowId;

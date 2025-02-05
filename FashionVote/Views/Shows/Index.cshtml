@@ -54,9 +54,19 @@
                         }
                         else
                         {
-                            <a asp-action="Register" asp-route-showId="@show.ShowId" class="btn btn-primary btn-sm">
+                            @* <a asp-action="Register" asp-controller="Shows" asp-route-showId="@show.ShowId" class="btn btn-primary btn-sm">
                                 Register
-                            </a>
+                            </a> *@
+                            <form asp-action="Register"
+                                asp-controller="Shows"
+                                asp-route-showId="@show.ShowId"
+                                method="post">
+                                <input type="hidden" name="showId" value="@show.ShowId" />
+                                <button type="submit" class="btn btn-primary btn-sm">Register</button>
+                            </form>
+
+
+
                         }
                     }
                     else if (User.IsInRole("Admin"))

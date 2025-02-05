@@ -1,23 +1,46 @@
-using System;
-using FashionVote.Models;
+// using System;
+// using FashionVote.Models;
 
-namespace FashionVote.DTOs
+// namespace FashionVote.DTOs
+// {
+//   public class ParticipantDTO
+//   {
+//       public int ParticipantId { get; set; }
+//       public string Name { get; set; }
+//       public string Email { get; set; }
+//       public List<ShowDTO> RegisteredShows { get; set; }
+
+//       public ParticipantDTO(Participant participant)
+//       {
+//           ParticipantId = participant.ParticipantId;
+//           Name = participant.Name;
+//           Email = participant.Email;
+//           RegisteredShows = participant.ParticipantShows?
+//               .Select(ps => new ShowDTO(ps.Show))
+//               .ToList();
+//       }
+//   }
+// }
+
+using System.Collections.Generic;
+
+namespace FashionVote.Models.DTOs
 {
-  public class ParticipantDTO
-  {
-      public int ParticipantId { get; set; }
-      public string Name { get; set; }
-      public string Email { get; set; }
-      public List<ShowDTO> RegisteredShows { get; set; }
+    public class ParticipantDTO
+    {
+        public int ParticipantId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public List<ShowDto> Shows { get; set; } = new List<ShowDto>();
 
-      public ParticipantDTO(Participant participant)
-      {
-          ParticipantId = participant.ParticipantId;
-          Name = participant.Name;
-          Email = participant.Email;
-          RegisteredShows = participant.ParticipantShows?
-              .Select(ps => new ShowDTO(ps.Show))
-              .ToList();
-      }
-  }
+        public ParticipantDTO(Participant participant)
+        {
+            ParticipantId = participant.ParticipantId;
+            Name = participant.Name;
+            Email = participant.Email;
+            Shows = participant.ParticipantShows != null
+                ? participant.ParticipantShows.Select(ps => new ShowDto(ps.Show)).ToList()
+                : new List<ShowDto>();
+        }
+    }
 }

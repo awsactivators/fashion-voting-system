@@ -39,7 +39,7 @@ namespace FashionVote.Controllers
 
             var shows = await _context.Shows
                 .AsNoTracking() // Prevents cached data
-                .Where(s => s.StartTime > DateTime.UtcNow) 
+                .Where(s => s.EndTime > DateTime.UtcNow) 
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();
 
@@ -67,7 +67,7 @@ namespace FashionVote.Controllers
 
             var shows = await _context.Shows
                 .AsNoTracking() // Prevents cached data
-                .Where(s => s.StartTime > DateTime.UtcNow)
+                .Where(s => s.EndTime > DateTime.UtcNow)
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();
 
@@ -103,7 +103,9 @@ namespace FashionVote.Controllers
 
             if (Request.Headers["Accept"] == "application/json")
             {
-                return Ok(shows.Select(s => new ShowDto(s)));
+                // return Ok(shows.Select(s => new ShowDto(s)));
+                return Ok(shows.Select(s => new FashionVote.Models.DTOs.ShowDto(s)));
+
             }
 
             return View(shows);
@@ -140,17 +142,19 @@ namespace FashionVote.Controllers
 
             if (Request.Headers["Accept"] == "application/json")
             {
-                return Ok(registeredShows.Select(s => new ShowDto(s)));
+                // return Ok(registeredShows.Select(s => new ShowDto(s)));
+                return Ok(registeredShows.Select(s => new FashionVote.Models.DTOs.ShowDto(s)));
+
             }
 
             return View(registeredShows);
         }
 
         /// <summary>
-        /// Registers a participant for a show (Supports Razor View & API JSON).
+        /// Registers a participant for a show (Supports API & Razor View).
         /// </summary>
         /// <param name="showId">ID of the show to register.</param>
-        /// <returns>Redirects to MyShows or returns JSON response.</returns>
+        /// <returns>Redirects to Upcoming Shows or returns API response.</returns>
         /// <example>POST /api/shows/register/5</example>
         [HttpPost("register/{showId}")]
         [Authorize(Roles = "Participant")]
@@ -168,53 +172,50 @@ namespace FashionVote.Controllers
 
             if (participant == null)
             {
-                Console.WriteLine("❌ Participant not found.");
-                return Request.Headers["Accept"] == "application/json"
-                    ? BadRequest(new { message = "Only registered participants can register for shows." })
-                    : RedirectToAction(nameof(Index), "Shows");
+                TempData["ErrorMessage"] = "Only registered participants can register for shows.";
+                return RedirectToAction(nameof(Index));
             }
 
+            // ✅ Check if already registered
             if (participant.ParticipantShows.Any(ps => ps.ShowId == showId))
             {
-                Console.WriteLine("⚠️ Already registered for this show.");
-                return Request.Headers["Accept"] == "application/json"
-                    ? Conflict(new { message = "You are already registered for this show." })
-                    : RedirectToAction(nameof(MyShows));
+                TempData["ErrorMessage"] = "You have already registered for this show.";
+                return RedirectToAction(nameof(Index));
             }
 
             var newShow = await _context.Shows.FindAsync(showId);
             if (newShow == null)
             {
-                Console.WriteLine("❌ Show not found.");
-                return Request.Headers["Accept"] == "application/json"
-                    ? NotFound(new { message = "The show does not exist." })
-                    : RedirectToAction(nameof(Index), "Shows");
+                TempData["ErrorMessage"] = "The show does not exist.";
+                return RedirectToAction(nameof(Index));
             }
 
-            if (participant.ParticipantShows.Any(ps => 
+            // ✅ Check for scheduling conflicts
+            if (participant.ParticipantShows.Any(ps =>
                 ps.Show.StartTime < newShow.EndTime && ps.Show.EndTime > newShow.StartTime))
             {
-                Console.WriteLine("⚠️ Scheduling conflict detected.");
-                return Request.Headers["Accept"] == "application/json"
-                    ? Conflict(new { message = "You cannot register due to a scheduling conflict." })
-                    : RedirectToAction(nameof(MyShows));
+                TempData["ErrorMessage"] = "You cannot register for this show due to a scheduling conflict.";
+                return RedirectToAction(nameof(Index));
             }
 
             // ✅ Register the participant
-            participant.ParticipantShows.Add(new ParticipantShow
+            var participantShow = new ParticipantShow
             {
                 ParticipantId = participant.ParticipantId,
                 ShowId = showId
-            });
+            };
 
+            _context.ParticipantShows.Add(participantShow);
             await _context.SaveChangesAsync();
 
-            Console.WriteLine("✅ Registration successful!");
-
-            return Request.Headers["Accept"] == "application/json"
-                ? Ok(new { message = "You have successfully registered for this show." })
-                : RedirectToAction(nameof(MyShows));
+            TempData["SuccessMessage"] = "You have successfully registered for the show!";
+            return RedirectToAction(nameof(MyShows)); // Redirect to MyShows page after registration
         }
+
+
+
+
+
 
 
         /// <summary>
@@ -276,7 +277,9 @@ namespace FashionVote.Controllers
 
             if (Request.Headers["Accept"] == "application/json")
             {
-                return CreatedAtAction(nameof(Details), new { id = show.ShowId }, new ShowDto(show));
+                // return CreatedAtAction(nameof(Details), new { id = show.ShowId }, new ShowDto(show));
+                return CreatedAtAction(nameof(Details), new { id = show.ShowId }, new FashionVote.Models.DTOs.ShowDto(show));
+
             }
 
             TempData["SuccessMessage"] = "Show added successfully!";
@@ -306,7 +309,9 @@ namespace FashionVote.Controllers
 
             if (Request.Headers["Accept"] == "application/json")
             {
-                return Ok(new ShowDto(show));
+                // return Ok(new ShowDto(show));
+                return Ok(new FashionVote.Models.DTOs.ShowDto(show));
+
             }
 
             return View(show);
@@ -394,7 +399,9 @@ namespace FashionVote.Controllers
                 return NotFound("Show not found.");
             }
 
-            return Request.Headers["Accept"] == "application/json" ? Ok(new ShowDto(show)) : View(show);
+            // return Request.Headers["Accept"] == "application/json" ? Ok(new ShowDto(show)) : View(show);
+            return Request.Headers["Accept"] == "application/json" ? Ok(new FashionVote.Models.DTOs.ShowDto(show)) : View(show);
+
         }
 
         /// <summary>
@@ -426,6 +433,138 @@ namespace FashionVote.Controllers
 
             TempData["SuccessMessage"] = "Show deleted successfully!";
             return RedirectToAction(nameof(AdminIndex)); // ✅ Redirects for Razor View
+        }
+
+
+        /// <summary>
+        /// Unregisters a participant from a show before it starts (Supports API & Razor View).
+        /// </summary>
+        /// <param name="showId">ID of the show.</param>
+        /// <returns>Redirects or returns API response.</returns>
+        /// <example>POST /api/shows/unregister/5</example>
+        [HttpPost("unregister/{showId}")]
+        [Authorize(Roles = "Participant")]
+        [ValidateAntiForgeryToken] // ✅ Required for Razor Forms
+        public async Task<IActionResult> Unregister(int showId)
+        {
+            var userEmail = User.Identity.Name;
+
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
+                .FirstOrDefaultAsync(p => p.Email == userEmail);
+
+            if (participant == null)
+            {
+                TempData["ErrorMessage"] = "Only registered participants can unregister.";
+                return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+            }
+
+            var show = participant.ParticipantShows.FirstOrDefault(ps => ps.ShowId == showId)?.Show;
+            if (show == null)
+            {
+                TempData["ErrorMessage"] = "You are not registered for this show.";
+                return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+            }
+
+            if (show.StartTime <= DateTime.UtcNow)
+            {
+                TempData["ErrorMessage"] = "You cannot unregister from a show that has already started.";
+                return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+            }
+
+            participant.ParticipantShows.Remove(participant.ParticipantShows.First(ps => ps.ShowId == showId));
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "You have successfully unregistered from this show.";
+            return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+        }
+
+
+
+        // Delete for participant registered passed show
+        /// <summary>
+        /// Displays the delete confirmation page for a participant.
+        /// </summary>
+        /// <param name="showId">ID of the show to be deleted.</param>
+        /// <returns>Returns the Delete confirmation view.</returns>
+        /// <example>GET /Shows/DeleteConfirmParticipant/5</example>
+        [HttpGet("delete/participant/confirm/{showId}")]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> DeleteConfirmParticipant(int showId)
+        {
+            var userEmail = User.Identity.Name;
+
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
+                .FirstOrDefaultAsync(p => p.Email == userEmail);
+
+            if (participant == null)
+            {
+                TempData["ErrorMessage"] = "You are not registered for any shows.";
+                return RedirectToAction(nameof(MyShows));
+            }
+
+            var show = participant.ParticipantShows.FirstOrDefault(ps => ps.ShowId == showId)?.Show;
+            if (show == null)
+            {
+                TempData["ErrorMessage"] = "Show not found.";
+                return RedirectToAction(nameof(MyShows));
+            }
+
+            if (show.EndTime > DateTime.UtcNow)
+            {
+                TempData["ErrorMessage"] = "You can only delete past shows.";
+                return RedirectToAction(nameof(MyShows));
+            }
+
+            return View(show); // ✅ Redirects to Delete Confirmation View for Participants
+        }
+
+
+        /// <summary>
+        /// Deletes a past show from the participant’s list.
+        /// </summary>
+        /// <param name="showId">ID of the show.</param>
+        /// <returns>Redirects or returns JSON response.</returns>
+        /// <example>POST /Shows/DeleteConfirmedParticipant/5</example>
+        [HttpPost("participant/delete/confirmed/{showId}")]
+        [Authorize(Roles = "Participant")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmedParticipant(int showId)
+        {
+            var userEmail = User.Identity.Name;
+
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
+                .FirstOrDefaultAsync(p => p.Email == userEmail);
+
+            if (participant == null)
+            {
+                TempData["ErrorMessage"] = "Only registered participants can delete past shows.";
+                return RedirectToAction(nameof(MyShows));
+            }
+
+            var show = participant.ParticipantShows.FirstOrDefault(ps => ps.ShowId == showId)?.Show;
+            if (show == null)
+            {
+                TempData["ErrorMessage"] = "You are not registered for this show.";
+                return RedirectToAction(nameof(MyShows));
+            }
+
+            if (show.EndTime > DateTime.UtcNow)
+            {
+                TempData["ErrorMessage"] = "You can only delete past shows.";
+                return RedirectToAction(nameof(MyShows));
+            }
+
+            participant.ParticipantShows.Remove(participant.ParticipantShows.First(ps => ps.ShowId == showId));
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Past show deleted successfully.";
+            return RedirectToAction(nameof(MyShows));
         }
 
 

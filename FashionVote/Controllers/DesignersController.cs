@@ -47,14 +47,19 @@ namespace FashionVote.Controllers
         /// <summary>
         /// Displays the form to create a new designer.
         /// </summary>
-        /// <returns>Returns the Create view.</returns>
+        /// <returns>Returns the Create view with only future shows.</returns>
         /// <example>GET /designers/create</example>
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Shows = await _context.Shows.ToListAsync();
+            ViewBag.Shows = await _context.Shows
+                .Where(s => s.EndTime > DateTime.UtcNow) // ✅ Exclude past shows
+                .OrderBy(s => s.StartTime)
+                .ToListAsync();
+
             return View();
         }
+
 
         /// <summary>
         /// Creates a new designer and assigns them to selected shows.

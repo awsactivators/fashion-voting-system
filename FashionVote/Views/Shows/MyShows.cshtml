@@ -6,7 +6,7 @@
 
 <h1 class="mb-4">My Registered Shows</h1>
 
-<!-- ✅ Display Success/Error Messages Here -->
+<!-- ✅ Display Success/Error Messages -->
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
@@ -58,13 +58,13 @@ else
                             }
                             else if (timeUntilStart.TotalHours < 1)
                             {
-                                <span class="badge bg-warning" title="Voting starts soon">
+                                <span class="badge bg-warning">
                                     Voting starts in @timeUntilStart.Minutes minutes
                                 </span>
                             }
                             else
                             {
-                                <span class="badge bg-warning" title="Voting starts soon">
+                                <span class="badge bg-warning">
                                     Voting starts in @timeUntilStart.Hours hours, @timeUntilStart.Minutes minutes
                                 </span>
                             }
@@ -79,23 +79,40 @@ else
                         }
                     </td>
 
-                    <!-- Actions (Vote Button) -->
+                    <!-- Actions (Vote, Unregister, Delete) -->
                     <td>
                         @if (currentTime < show.StartTime)
                         {
-                            <button class="btn btn-secondary" disabled title="Voting has not started yet">Vote Now</button>
+                            <!-- ✅ Unregister from upcoming show -->
+                            <form asp-controller="Shows" asp-action="Unregister" asp-route-showId="@show.ShowId" method="post">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    Unregister
+                                </button>
+                            </form>
                         }
                         else if (currentTime > show.EndTime)
                         {
-                            <button class="btn btn-danger" disabled title="Voting is closed">Voting Closed</button>
+                            <!-- ✅ Delete past show -->
+                            <form asp-controller="Shows" asp-action="DeleteConfirmParticipant" asp-route-showId="@show.ShowId" method="post">
+                                @* <button type="submit" class="btn btn-danger btn-sm">
+                                    Delete
+                                </button> *@
+                                <a asp-action="DeleteConfirmParticipant"
+                                  asp-controller="Shows"
+                                  asp-route-showId="@show.ShowId"
+                                  class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+
+                            </form>
                         }
                         else
                         {
-                            <a asp-controller="Votes" asp-action="Vote" asp-route-showId="@show.ShowId" class="btn btn-success btn-sm" title="Vote for your favorite designer">
-                              Vote Now
-                          </a>
-
-
+                            <!-- ✅ Vote -->
+                            <a asp-controller="Votes" asp-action="Vote" asp-route-showId="@show.ShowId" 
+                               class="btn btn-success btn-sm" title="Vote for your favorite designer">
+                                Vote Now
+                            </a>
                         }
                     </td>
                 </tr>

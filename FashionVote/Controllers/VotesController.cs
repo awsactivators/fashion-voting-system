@@ -97,12 +97,17 @@ namespace FashionVote.Controllers
         public async Task<IActionResult> Vote(int showId)
         {
             var userEmail = User.Identity.Name;
+
             var participant = await _context.Participants
-                .Include(p => p.ParticipantShows)
+                .Include(p => p.ParticipantShows) // ✅ Ensure participant's shows are loaded
+                .ThenInclude(ps => ps.Show)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
             if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
-                return Unauthorized("You are not registered for this show.");
+            {
+                TempData["ErrorMessage"] = "You are not registered for this show.";
+                return RedirectToAction("MyShows", "Shows");
+            }
 
             var show = await _context.Shows
                 .Include(s => s.DesignerShows).ThenInclude(ds => ds.Designer)
@@ -111,6 +116,7 @@ namespace FashionVote.Controllers
 
             return show == null ? NotFound("Show not found.") : View(show);
         }
+
 
         /// <summary>
         /// Submits votes for a show.
@@ -123,16 +129,32 @@ namespace FashionVote.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitVote([FromForm] VoteSubmissionDTO voteDto)
         {
+            Console.WriteLine($"🔹 SubmitVote Request by: {User.Identity.Name} for Show ID: {voteDto.ShowId}");
+
+            if (voteDto.ShowId == 0)
+            {
+                Console.WriteLine("❌ Error: ShowId is 0, which means it was not passed correctly!");
+                TempData["ErrorMessage"] = "Invalid show selection.";
+                return RedirectToAction("MyShows", "Shows"); 
+            }
+
             var userEmail = User.Identity.Name;
             var participant = await _context.Participants
                 .Include(p => p.ParticipantShows)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
             if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == voteDto.ShowId))
-                return Unauthorized("You are not registered for this show.");
+            {
+                Console.WriteLine("❌ Error: You are not registered for this show.");
+                TempData["ErrorMessage"] = "You are not registered for this show.";
+                return RedirectToAction("MyShows", "Shows"); 
+            }
 
             if (voteDto.DesignerIds == null || !voteDto.DesignerIds.Any())
-                return BadRequest("You must select at least one designer to vote for.");
+            {
+                TempData["ErrorMessage"] = "You didn't vote for any designer.";
+                return RedirectToAction("MyShows", "Shows");
+            }
 
             foreach (var designerId in voteDto.DesignerIds)
             {
@@ -153,10 +175,15 @@ namespace FashionVote.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Request.Headers["Accept"] == "application/json"
-                ? Ok(new { message = "Vote submitted successfully!" })
-                : RedirectToAction("Vote", new { showId = voteDto.ShowId });
+            Console.WriteLine("✅ Vote submitted successfully!");
+
+            TempData["SuccessMessage"] = "Vote submitted successfully!";
+            return RedirectToAction("Vote", new { showId = voteDto.ShowId });
         }
+
+
+
+
 
         /// <summary>
         /// Allows participants to remove their votes.

@@ -17,6 +17,8 @@ namespace FashionVote.Models.DTOs
         /// <summary>
         /// List of selected show IDs the designer is assigned to.
         /// </summary>
-        public int[] SelectedShowIds { get; set; } = new int[0];
+        // public int[] SelectedShowIds { get; set; } = new int[0];
+        public List<int> SelectedShowIds { get; set; } = new List<int>();
+
     }
 }

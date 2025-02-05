@@ -30,52 +30,58 @@
 }
 else
 {
-    <form asp-action="SubmitVote" asp-controller="Votes" asp-route-showId="@Model.ShowId" method="post">
-        <table class="table table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Designer</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Vote</th>
-                    <th>Unvote</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var designerShow in Model.DesignerShows)
-                {
-                    // ✅ Ensure "hasVoted" checks the participant's votes
-                    var hasVoted = Model.Votes.Any(v => v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
+    <form asp-action="SubmitVote" asp-controller="Votes" method="post">
+    <input type="hidden" name="ShowId" value="@Model.ShowId" /> <!-- ✅ Ensure ShowId is included -->
+    
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Designer</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Vote</th>
+                <th>Unvote</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var designerShow in Model.DesignerShows)
+            {
+                var hasVoted = Model.Votes.Any(v => v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
 
-                    <tr>
-                        <td>@designerShow.Designer.Name</td>
-                        <td>@designerShow.Designer.Category</td>
-                        <td>
-                            @if (hasVoted)
-                            {
-                                <span class="badge bg-success">Voted</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-warning">Not Voted</span>
-                            }
-                        </td>
-                        <td>
-                            <input type="checkbox" name="designerIds" value="@designerShow.DesignerId" @(hasVoted ? "disabled" : "") />
-                        </td>
-                        <td>
-                            @if (hasVoted)
-                            {
-                                <form asp-action="Unvote" asp-controller="Votes" asp-route-showId="@Model.ShowId" asp-route-designerId="@designerShow.DesignerId" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger btn-sm">Unvote</button>
-                                </form>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <button type="submit" class="btn btn-primary">Submit Votes</button>
+                <tr>
+                    <td>@designerShow.Designer.Name</td>
+                    <td>@designerShow.Designer.Category</td>
+                    <td>
+                        @if (hasVoted)
+                        {
+                            <span class="badge bg-success">Voted</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">Not Voted</span>
+                        }
+                    </td>
+                    <td>
+                        <input type="checkbox" name="DesignerIds" value="@designerShow.DesignerId" @(hasVoted ? "disabled" : "") />
+                    </td>
+                    <td>
+                        @if (hasVoted)
+                        {
+                            <form asp-action="Unvote" asp-controller="Votes" method="post" style="display:inline;">
+                                <input type="hidden" name="ShowId" value="@Model.ShowId" />
+                                <input type="hidden" name="DesignerId" value="@designerShow.DesignerId" />
+                                <button type="submit" class="btn btn-danger btn-sm">Unvote</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <button type="submit" class="btn btn-primary">Submit Votes</button>
     </form>
 }
-<a asp-action="MyShows" asp-controller="Shows" class="btn btn-secondary">Back to My Shows</a>
+<a asp-action="MyShows" asp-controller="Shows" class="btn btn-secondary">Back to My Shows</a> 
+
+
