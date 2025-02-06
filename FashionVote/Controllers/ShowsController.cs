@@ -49,7 +49,7 @@ namespace FashionVote.Controllers
             }
             else
             {
-                Console.WriteLine($"✅ {shows.Count} upcoming shows retrieved.");
+                Console.WriteLine($" {shows.Count} upcoming shows retrieved.");
             }
 
             return View(shows);
@@ -63,7 +63,7 @@ namespace FashionVote.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetShows()
         {
-            Console.WriteLine("🔍 Fetching Upcoming Shows (API)...");
+            Console.WriteLine("Fetching Upcoming Shows (API)...");
 
             var shows = await _context.Shows
                 .AsNoTracking() // Prevents cached data
@@ -77,7 +77,7 @@ namespace FashionVote.Controllers
             }
             else
             {
-                Console.WriteLine($"✅ {shows.Count} upcoming shows retrieved for API.");
+                Console.WriteLine($"{shows.Count} upcoming shows retrieved for API.");
             }
 
             return Ok(shows);
@@ -176,7 +176,7 @@ namespace FashionVote.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // ✅ Check if already registered
+            // Check if already registered
             if (participant.ParticipantShows.Any(ps => ps.ShowId == showId))
             {
                 TempData["ErrorMessage"] = "You have already registered for this show.";
@@ -190,7 +190,7 @@ namespace FashionVote.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // ✅ Check for scheduling conflicts
+            // Check for scheduling conflicts
             if (participant.ParticipantShows.Any(ps =>
                 ps.Show.StartTime < newShow.EndTime && ps.Show.EndTime > newShow.StartTime))
             {
@@ -198,7 +198,7 @@ namespace FashionVote.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // ✅ Register the participant
+            // Register the participant
             var participantShow = new ParticipantShow
             {
                 ParticipantId = participant.ParticipantId,
@@ -240,16 +240,16 @@ namespace FashionVote.Controllers
         [HttpPost("Create")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] Show show) // ✅ Handle HTML Form
+        public async Task<IActionResult> Create([FromForm] Show show) // Handle HTML Form
         {
-            Console.WriteLine($"🟡 Before Conversion: StartTime = {show.StartTime}, EndTime = {show.EndTime}");
+            Console.WriteLine($"Before Conversion: StartTime = {show.StartTime}, EndTime = {show.EndTime}");
 
-            // ✅ Ensure Proper UTC Conversion
+            // UTC Conversion
             show.StartTime = show.StartTime.Kind == DateTimeKind.Utc ? show.StartTime : show.StartTime.ToUniversalTime();
             show.EndTime = show.EndTime.Kind == DateTimeKind.Utc ? show.EndTime : show.EndTime.ToUniversalTime();
 
-            Console.WriteLine($"🟢 After Conversion (UTC): StartTime = {show.StartTime}, EndTime = {show.EndTime}");
-            Console.WriteLine($"⏳ Current UTC Time: {DateTime.UtcNow}");
+            Console.WriteLine($"After Conversion (UTC): StartTime = {show.StartTime}, EndTime = {show.EndTime}");
+            Console.WriteLine($"Current UTC Time: {DateTime.UtcNow}");
 
             if (show.StartTime <= DateTime.UtcNow)
             {
@@ -273,7 +273,7 @@ namespace FashionVote.Controllers
             _context.Add(show);
             await _context.SaveChangesAsync();
 
-            Console.WriteLine("✅ Show successfully added!");
+            Console.WriteLine("Show successfully added!");
 
             if (Request.Headers["Accept"] == "application/json")
             {
@@ -334,7 +334,7 @@ namespace FashionVote.Controllers
                 return NotFound();
             }
 
-            return View(show); // ✅ Supports Razor Views
+            return View(show); 
         }
 
         /// <summary>
@@ -346,8 +346,8 @@ namespace FashionVote.Controllers
         /// <example>PUT /api/Shows/Edit/8</example>
         [HttpPost("Edit/{id}")]
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken] // ✅ Required for Razor Form
-        public async Task<IActionResult> Edit(int id, [FromForm] Show show) // ✅ [FromForm] for Razor View Support
+        [ValidateAntiForgeryToken] 
+        public async Task<IActionResult> Edit(int id, [FromForm] Show show) 
         {
             if (id != show.ShowId)
             {
@@ -356,7 +356,7 @@ namespace FashionVote.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(show); // ✅ For Razor Views
+                return View(show); 
             }
 
             try
@@ -370,7 +370,7 @@ namespace FashionVote.Controllers
                 }
 
                 TempData["SuccessMessage"] = "Show updated successfully!";
-                return RedirectToAction(nameof(AdminIndex)); // ✅ Redirects Razor View
+                return RedirectToAction(nameof(AdminIndex)); 
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -411,10 +411,10 @@ namespace FashionVote.Controllers
         /// <param name="id">The ID of the show to delete.</param>
         /// <returns>Redirects to AdminIndex if successful.</returns>
         /// <example>DELETE /api/shows/delete/5</example>
-        [HttpPost("delete/{id}")] // ✅ Changed to POST for Razor Forms
-        [HttpDelete("delete/{id}")] // ✅ Still supports API DELETE requests
+        [HttpPost("delete/{id}")] 
+        [HttpDelete("delete/{id}")] 
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken] // ✅ Works only for POST (Razor View support)
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var show = await _context.Shows.FindAsync(id);
@@ -432,7 +432,7 @@ namespace FashionVote.Controllers
             }
 
             TempData["SuccessMessage"] = "Show deleted successfully!";
-            return RedirectToAction(nameof(AdminIndex)); // ✅ Redirects for Razor View
+            return RedirectToAction(nameof(AdminIndex)); 
         }
 
 
@@ -444,7 +444,7 @@ namespace FashionVote.Controllers
         /// <example>POST /api/shows/unregister/5</example>
         [HttpPost("unregister/{showId}")]
         [Authorize(Roles = "Participant")]
-        [ValidateAntiForgeryToken] // ✅ Required for Razor Forms
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Unregister(int showId)
         {
             var userEmail = User.Identity.Name;
@@ -457,27 +457,27 @@ namespace FashionVote.Controllers
             if (participant == null)
             {
                 TempData["ErrorMessage"] = "Only registered participants can unregister.";
-                return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+                return RedirectToAction(nameof(MyShows)); 
             }
 
             var show = participant.ParticipantShows.FirstOrDefault(ps => ps.ShowId == showId)?.Show;
             if (show == null)
             {
                 TempData["ErrorMessage"] = "You are not registered for this show.";
-                return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+                return RedirectToAction(nameof(MyShows)); 
             }
 
             if (show.StartTime <= DateTime.UtcNow)
             {
                 TempData["ErrorMessage"] = "You cannot unregister from a show that has already started.";
-                return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+                return RedirectToAction(nameof(MyShows)); 
             }
 
             participant.ParticipantShows.Remove(participant.ParticipantShows.First(ps => ps.ShowId == showId));
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "You have successfully unregistered from this show.";
-            return RedirectToAction(nameof(MyShows)); // ✅ Redirect for Razor Views
+            return RedirectToAction(nameof(MyShows)); 
         }
 
 
@@ -519,7 +519,7 @@ namespace FashionVote.Controllers
                 return RedirectToAction(nameof(MyShows));
             }
 
-            return View(show); // ✅ Redirects to Delete Confirmation View for Participants
+            return View(show); 
         }
 
 

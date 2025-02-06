@@ -16,7 +16,7 @@ namespace FashionVote.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // ✅ Initialize Collections to Prevent Validation Errors
+        // Initialize Collections to Prevent Validation Errors
         public ICollection<DesignerShow> DesignerShows { get; set; } = new List<DesignerShow>();
         public ICollection<Vote> Votes { get; set; } = new List<Vote>();
     }

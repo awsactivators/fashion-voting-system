@@ -6,7 +6,7 @@
 
 <h1 class="mb-4">My Registered Shows</h1>
 
-<!-- ✅ Display Success/Error Messages -->
+<!-- Display Success/Error Messages -->
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
@@ -83,7 +83,7 @@ else
                     <td>
                         @if (currentTime < show.StartTime)
                         {
-                            <!-- ✅ Unregister from upcoming show -->
+                            <!-- Unregister from upcoming show -->
                             <form asp-controller="Shows" asp-action="Unregister" asp-route-showId="@show.ShowId" method="post">
                                 <button type="submit" class="btn btn-warning btn-sm">
                                     Unregister
@@ -92,7 +92,7 @@ else
                         }
                         else if (currentTime > show.EndTime)
                         {
-                            <!-- ✅ Delete past show -->
+                            <!-- Delete past show -->
                             <form asp-controller="Shows" asp-action="DeleteConfirmParticipant" asp-route-showId="@show.ShowId" method="post">
                                 @* <button type="submit" class="btn btn-danger btn-sm">
                                     Delete
@@ -108,7 +108,7 @@ else
                         }
                         else
                         {
-                            <!-- ✅ Vote -->
+                            <!-- Vote -->
                             <a asp-controller="Votes" asp-action="Vote" asp-route-showId="@show.ShowId" 
                                class="btn btn-success btn-sm" title="Vote for your favorite designer">
                                 Vote Now

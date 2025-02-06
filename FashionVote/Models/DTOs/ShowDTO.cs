@@ -10,7 +10,7 @@ namespace FashionVote.Models.DTOs
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-        // ✅ Constructor to map Show entity to DTO
+        // Constructor to map Show entity to DTO
         public ShowDto(Show show)
         {
             ShowId = show.ShowId;

@@ -5,7 +5,7 @@
 
 <h1>Designers</h1>
 
-<!-- ✅ Success/Error Messages -->
+<!-- Success/Error Messages -->
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
@@ -35,7 +35,7 @@
                 <td>@designer.Name</td>
                 <td>@designer.Category</td>
 
-                <!-- ✅ Display Shows the Designer is Participating In -->
+                <!--  Display Shows the Designer is Participating In -->
                 <td>
                     @if (designer.DesignerShows != null && designer.DesignerShows.Any(ds => ds.Show != null))
                     {

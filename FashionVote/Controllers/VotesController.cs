@@ -69,7 +69,6 @@ namespace FashionVote.Controllers
                 return NotFound($"Show with ID {showId} not found.");
             }
 
-            // ✅ Create a strongly-typed DTO instead of an anonymous type
             var designerVoteCounts = show.DesignerShows
                 .Select(ds => new DesignerVoteDTO
                 {
@@ -99,7 +98,7 @@ namespace FashionVote.Controllers
             var userEmail = User.Identity.Name;
 
             var participant = await _context.Participants
-                .Include(p => p.ParticipantShows) // ✅ Ensure participant's shows are loaded
+                .Include(p => p.ParticipantShows) 
                 .ThenInclude(ps => ps.Show)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
@@ -133,7 +132,7 @@ namespace FashionVote.Controllers
 
             if (voteDto.ShowId == 0)
             {
-                Console.WriteLine("❌ Error: ShowId is 0, which means it was not passed correctly!");
+                Console.WriteLine(" Error: ShowId is 0, which means it was not passed correctly!");
                 TempData["ErrorMessage"] = "Invalid show selection.";
                 return RedirectToAction("MyShows", "Shows"); 
             }
@@ -145,7 +144,7 @@ namespace FashionVote.Controllers
 
             if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == voteDto.ShowId))
             {
-                Console.WriteLine("❌ Error: You are not registered for this show.");
+                Console.WriteLine(" Error: You are not registered for this show.");
                 TempData["ErrorMessage"] = "You are not registered for this show.";
                 return RedirectToAction("MyShows", "Shows"); 
             }
@@ -175,7 +174,7 @@ namespace FashionVote.Controllers
 
             await _context.SaveChangesAsync();
 
-            Console.WriteLine("✅ Vote submitted successfully!");
+            Console.WriteLine("Vote submitted successfully!");
 
             TempData["SuccessMessage"] = "Vote submitted successfully!";
             return RedirectToAction("Vote", new { showId = voteDto.ShowId });

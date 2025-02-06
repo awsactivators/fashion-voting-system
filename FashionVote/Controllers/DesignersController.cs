@@ -53,7 +53,7 @@ namespace FashionVote.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.Shows = await _context.Shows
-                .Where(s => s.EndTime > DateTime.UtcNow) // ✅ Exclude past shows
+                .Where(s => s.EndTime > DateTime.UtcNow) 
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();
 
@@ -70,7 +70,7 @@ namespace FashionVote.Controllers
         /// <example>POST /api/designers/create</example>
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([FromForm] DesignerCreateDTO designerDto) // ✅ Change FromBody to FromForm
+        public async Task<IActionResult> Create([FromForm] DesignerCreateDTO designerDto) 
         {
             if (designerDto == null)
                 return BadRequest(new { message = "Invalid data. Designer data is required." });
@@ -155,9 +155,9 @@ namespace FashionVote.Controllers
         /// <returns>Redirects to the Index view or returns JSON response.</returns>
         /// <example>POST /api/designers/edit/5 (Form Submission)</example>
         /// <example>PUT /api/designers/edit/5 (API JSON)</example>
-        [HttpPost("edit/{id}")] // ✅ Change from HttpPut to HttpPost for form support
+        [HttpPost("edit/{id}")] 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [FromForm] DesignerUpdateDTO designerDto) // ✅ Use FromForm
+        public async Task<IActionResult> Edit(int id, [FromForm] DesignerUpdateDTO designerDto) 
         {
             if (id != designerDto.DesignerId) return BadRequest("ID mismatch.");
 
@@ -170,19 +170,19 @@ namespace FashionVote.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.ShowList = new MultiSelectList(_context.Shows, "ShowId", "ShowName", designerDto.SelectedShowIds);
-                return View("Edit", designer); // ✅ Reload view with errors
+                return View("Edit", designer); 
             }
 
             try
             {
-                // ✅ Update designer fields
+                // Update designer fields
                 designer.Name = designerDto.Name;
                 designer.Category = designerDto.Category;
 
-                // ✅ Remove old show assignments
+                // Remove old show assignments
                 _context.DesignerShows.RemoveRange(designer.DesignerShows);
 
-                // ✅ Add new show assignments
+                // Add new show assignments
                 foreach (var showId in designerDto.SelectedShowIds ?? new int[0])
                 {
                     _context.DesignerShows.Add(new DesignerShow
@@ -204,7 +204,7 @@ namespace FashionVote.Controllers
 
             return Request.Headers["Accept"] == "application/json"
                 ? Ok(new { message = "Designer updated successfully!" })
-                : RedirectToAction(nameof(Index)); // ✅ Redirect after successful update
+                : RedirectToAction(nameof(Index)); // Redirect after successful update
         }
 
 
@@ -238,7 +238,7 @@ namespace FashionVote.Controllers
         /// <returns>Redirects to Index after deletion.</returns>
         /// <example>POST /designers/delete/5</example>
         [HttpPost("delete/{id}")]
-        [ValidateAntiForgeryToken] // ✅ Form requests only
+        [ValidateAntiForgeryToken] // Form requests only
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var designer = await _context.Designers

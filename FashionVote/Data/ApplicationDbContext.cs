@@ -62,7 +62,7 @@ namespace FashionVote.Data
                 .HasIndex(v => new { v.ParticipantId, v.DesignerId, v.ShowId })
                 .IsUnique();
 
-            // ✅ Many-to-Many Relationship for Participant and Shows
+            // Many-to-Many Relationship for Participant and Shows
             modelBuilder.Entity<ParticipantShow>()
                 .HasKey(ps => new { ps.ParticipantId, ps.ShowId });
 

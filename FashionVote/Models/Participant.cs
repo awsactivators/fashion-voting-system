@@ -22,7 +22,7 @@ namespace FashionVote.Models
         public int? ShowId { get; set; }
         public Show Show { get; set; }
 
-        // ✅ Many-to-Many: A participant can register for multiple shows
+        // Many-to-Many: A participant can register for multiple shows
         public ICollection<ParticipantShow> ParticipantShows { get; set; } = new List<ParticipantShow>();
 
         public ICollection<Vote> Votes { get; set; } = new List<Vote>();   
