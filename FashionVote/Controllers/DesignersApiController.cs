@@ -25,6 +25,15 @@ namespace FashionVote.Controllers.Api
         /// <summary>
         /// Retrieves a list of all designers with their assigned shows.
         /// </summary>
+        /// <returns>Returns a JSON list of designers.</returns>
+        /// <response code="200">Returns the list of designers.</response>
+        /// <example>
+        /// curl -X GET http://localhost:5157/api/designers -H "Accept: application/json"
+        /// <output>
+        /// [{"designerId":1,"name":"Kelvin klein","category":"Casual","shows":["Spring SS2"]},{"designerId":2,"name":"Ella MIA","category":"Traditional","shows":["Spring SS2"]}
+        /// </output>
+        /// </example>
+        
         [HttpGet]
         public async Task<IActionResult> GetDesigners()
         {
@@ -36,9 +45,20 @@ namespace FashionVote.Controllers.Api
             return Ok(designers.Select(d => new DesignerDTO(d)));
         }
 
+
+
         /// <summary>
         /// Retrieves details of a specific designer.
         /// </summary>
+        /// <param name="id">The ID of the designer to retrieve.</param>
+        /// <returns>Returns a JSON object containing designer details.</returns>
+        /// <response code="200">Returns the designer details.</response>
+        /// <response code="404">Designer not found.</response>
+        /// <example>
+        /// curl -X GET http://localhost:5157/api/designers/1 -H "Accept: application/json"
+        /// <output>{"designerId":1,"name":"Kelvin klein","category":"Casual","shows":["Spring SS2"]}</output>
+        /// </example>
+        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDesignerDetails(int id)
         {
@@ -53,9 +73,26 @@ namespace FashionVote.Controllers.Api
             return Ok(new DesignerDTO(designer));
         }
 
+
+
         /// <summary>
         /// Creates a new designer via API.
         /// </summary>
+        /// <param name="designerDto">The designer data transfer object.</param>
+        /// <returns>Returns the created designer ID and a success message.</returns>
+        /// <response code="201">Designer created successfully.</response>
+        /// <response code="400">Invalid request data.</response>
+        /// <example>
+        /// curl -X POST http://localhost:5157/api/designers \
+            // -H "Content-Type: application/json" \
+            // -d '{
+            //       "name": "Versace",
+            //       "category": "Streetwear",
+            //       "selectedShowIds": [1, 2]
+            //     }'
+        /// <output>{"message":"Designer created successfully!","designerId":10}</output>
+        /// </example>
+        
         [HttpPost]
         public async Task<IActionResult> CreateDesigner([FromBody] DesignerCreateDTO designerDto)
         {
@@ -87,9 +124,25 @@ namespace FashionVote.Controllers.Api
             return CreatedAtAction(nameof(GetDesignerDetails), new { id = designer.DesignerId }, new { message = "Designer created successfully!", designerId = designer.DesignerId });
         }
 
-        /// <summary>
-        /// Updates an existing designer via API.
+
+
         /// </summary>
+        /// <param name="id">The ID of the designer to update.</param>
+        /// <param name="designerDto">Updated designer data.</param>
+        /// <returns>Returns a success message.</returns>
+        /// <response code="200">Designer updated successfully.</response>
+        /// <response code="400">ID mismatch or invalid request.</response>
+        /// <response code="404">Designer not found.</response>
+        /// <example>
+        /// curl -X PUT http://localhost:5157/api/designers/10 \
+            //  -H "Content-Type: application/json" \
+            //  -d '{
+            //        "designerId": 10,
+            //        "name": "Donatella Versace",
+            //        "category": "High Fashion",
+            //        "selectedShowIds": [2, 3]
+        /// <output>{"message":"Designer updated successfully!","designerId":10}</output>
+        /// </example>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDesigner(int id, [FromBody] DesignerUpdateDTO designerDto)
         {
@@ -122,9 +175,20 @@ namespace FashionVote.Controllers.Api
             return Ok(new { message = "Designer updated successfully!" });
         }
 
+
+
         /// <summary>
         /// Deletes a designer via API.
         /// </summary>
+        /// <param name="id">The ID of the designer to delete.</param>
+        /// <returns>Returns a success message.</returns>
+        /// <response code="200">Designer deleted successfully.</response>
+        /// <response code="404">Designer not found.</response>
+        /// <example>
+        /// curl -X DELETE http://localhost:5157/api/designers/10
+        /// <output>{"message":"Designer deleted successfully."}</output>
+        /// </example>
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDesigner(int id)
         {

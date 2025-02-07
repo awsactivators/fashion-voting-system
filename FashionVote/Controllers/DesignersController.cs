@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FashionVote.Controllers
 {
-    [Authorize] // Requires authentication for all methods in this controller
+    [Authorize]
     [Route("designers")]
     public class DesignersController : Controller
     {
@@ -21,8 +21,10 @@ namespace FashionVote.Controllers
             _context = context;
         }
 
+
+
         /// <summary>
-        /// Displays the list of designers (Accessible to all authenticated users).
+        /// Displays the list of designers (Admin Only).
         /// </summary>
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -34,6 +36,8 @@ namespace FashionVote.Controllers
 
             return View("Index", designers);
         }
+
+
 
         /// <summary>
         /// Displays the form to create a new designer (Admin Only).
@@ -49,6 +53,8 @@ namespace FashionVote.Controllers
 
             return View();
         }
+
+
 
         /// <summary>
         /// Handles form submission for creating a new designer (Admin Only).
@@ -90,6 +96,8 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
         /// <summary>
         /// Displays the edit form for a designer (Admin Only).
         /// </summary>
@@ -104,7 +112,6 @@ namespace FashionVote.Controllers
 
             if (designer == null) return NotFound();
 
-            // Convert Designer to DesignerUpdateDTO
             var designerDto = new DesignerUpdateDTO
             {
                 DesignerId = designer.DesignerId,
@@ -116,6 +123,8 @@ namespace FashionVote.Controllers
             ViewBag.ShowList = new MultiSelectList(_context.Shows, "ShowId", "ShowName", designerDto.SelectedShowIds);
             return View(designerDto); 
         }
+
+
 
         /// <summary>
         /// Updates a designer's details (Admin Only).
@@ -151,6 +160,8 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
         /// <summary>
         /// Displays the delete confirmation page for a designer (Admin Only).
         /// </summary>
@@ -167,6 +178,8 @@ namespace FashionVote.Controllers
 
             return View(designer);
         }
+
+
 
         /// <summary>
         /// Handles the form submission to delete a designer (Admin Only).
@@ -191,8 +204,10 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
         /// <summary>
-        /// Displays the details of a designer (Accessible to all authenticated users).
+        /// Displays the details of a designer (Admin Only).
         /// </summary>
         [HttpGet("details/{id}")]
         [Authorize(Roles = "Admin")]

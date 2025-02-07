@@ -22,6 +22,10 @@ namespace FashionVote.Controllers
             _userManager = userManager;
         }
 
+
+        /// <summary>
+        /// Displays the list of upcoming shows.
+        /// </summary>
         [HttpGet("")]
         [AllowAnonymous]
         public async Task<IActionResult> Index()
@@ -35,6 +39,10 @@ namespace FashionVote.Controllers
             return View(shows);
         }
 
+
+        /// <summary>
+        /// Displays the admin view of all shows.
+        /// </summary>
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminIndex()
@@ -48,6 +56,10 @@ namespace FashionVote.Controllers
             return View(shows);
         }
 
+
+        /// <summary>
+        /// Displays the list of shows the participant is registered for.
+        /// </summary>
         [HttpGet("myshows")]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> MyShows()
@@ -67,6 +79,10 @@ namespace FashionVote.Controllers
             return View(participant.ParticipantShows.Select(ps => ps.Show).ToList());
         }
 
+
+        /// <summary>
+        /// Registers a participant for a show.
+        /// </summary>
         [HttpPost("register/{showId}")]
         [Authorize(Roles = "Participant")]
         [ValidateAntiForgeryToken]
@@ -107,6 +123,10 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(MyShows));
         }
 
+
+        /// <summary>
+        /// Displays the create show form.
+        /// </summary>
         [HttpGet("create")]
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
@@ -114,6 +134,10 @@ namespace FashionVote.Controllers
             return View();
         }
 
+
+        /// <summary>
+        /// Creates a new show.
+        /// </summary>
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -129,6 +153,9 @@ namespace FashionVote.Controllers
         }
 
 
+        /// <summary>
+        /// Displays the edit form for a specific show.
+        /// </summary>
         [HttpGet("edit/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
@@ -138,6 +165,10 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
+
+        /// <summary>
+        /// Updates the details of an existing show.
+        /// </summary>
         [HttpPost("edit/{id}")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -151,6 +182,7 @@ namespace FashionVote.Controllers
             TempData["SuccessMessage"] = "Show updated successfully.";
             return RedirectToAction(nameof(AdminIndex));
         }
+
 
 
         /// <summary>
@@ -173,6 +205,8 @@ namespace FashionVote.Controllers
 
             return View(show);
         }
+
+
 
         /// <summary>
         /// Unregisters a participant from a show before it starts.
@@ -214,6 +248,8 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(MyShows));
         }
 
+
+
         /// <summary>
         /// Displays the delete confirmation page for a past show.
         /// </summary>
@@ -248,6 +284,8 @@ namespace FashionVote.Controllers
 
             return View(show);
         }
+
+
 
         /// <summary>
         /// Deletes a participant's past show.
@@ -289,6 +327,11 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(MyShows));
         }
 
+
+
+        /// <summary>
+        /// Displays the delete confirmation page for a show (Admin only).
+        /// </summary>
         [HttpGet("delete/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
@@ -297,6 +340,11 @@ namespace FashionVote.Controllers
             return show == null ? NotFound() : View(show);
         }
 
+
+
+        /// <summary>
+        /// Deletes a show (Admin only).
+        /// </summary>
         [HttpPost("delete/{id}")]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]

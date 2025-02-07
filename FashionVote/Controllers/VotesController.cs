@@ -25,6 +25,10 @@ namespace FashionVote.Controllers
             _userManager = userManager;
         }
 
+
+        /// <summary>
+        /// Displays the list of all votes (Admin only).
+        /// </summary>
         [HttpGet("")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
@@ -38,6 +42,10 @@ namespace FashionVote.Controllers
             return View(votes);
         }
 
+
+        /// <summary>
+        /// Displays vote details and designer vote counts for a specific show (Admin only).
+        /// </summary>
         [HttpGet("ShowVotes/{showId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ShowVotes(int showId)
@@ -67,6 +75,10 @@ namespace FashionVote.Controllers
             return View(show);
         }
 
+
+        /// <summary>
+        /// Displays the voting page for a participant for a specific show.
+        /// </summary>
         [HttpGet("Vote/{showId}")]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> Vote(int showId)
@@ -100,8 +112,8 @@ namespace FashionVote.Controllers
 
 
 
-         /// <summary>
-        /// Submits votes for a show (For Razor Views).
+        /// <summary>
+        /// Submits votes for one or more designers in a specific show (Participant only).
         /// </summary>
         [HttpPost("SubmitVote")]
         [Authorize(Roles = "Participant")]
@@ -145,14 +157,13 @@ namespace FashionVote.Controllers
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Your vote has been submitted successfully!";
             
-            // Redirect to the Vote page again to persist selections
             return RedirectToAction("Vote", new { showId });
         }
 
 
 
         /// <summary>
-        /// Removes a vote for a designer in a show.
+        /// Removes a vote for a designer in a specific show (Participant only).
         /// </summary>
         [HttpPost("Unvote")]
         [Authorize(Roles = "Participant")]

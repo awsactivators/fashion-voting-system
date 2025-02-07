@@ -21,6 +21,8 @@ namespace FashionVote.Controllers
             _context = context;
         }
 
+
+
         /// <summary>
         /// Displays the list of participants (Accessible to all authenticated users).
         /// </summary>
@@ -34,6 +36,8 @@ namespace FashionVote.Controllers
 
             return View("Index", participants);
         }
+
+
 
         /// <summary>
         /// Displays the edit form for a participant (Admin Only).
@@ -54,6 +58,8 @@ namespace FashionVote.Controllers
 
             return View(participant);
         }
+
+
 
         /// <summary>
         /// Handles form submission for updating a participant (Admin Only).
@@ -89,6 +95,8 @@ namespace FashionVote.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+
         /// <summary>
         /// Displays the delete confirmation page for a participant (Admin Only).
         /// </summary>
@@ -105,6 +113,8 @@ namespace FashionVote.Controllers
 
             return View(participant);
         }
+
+
 
         /// <summary>
         /// Handles the form submission to delete a participant (Admin Only).
@@ -127,6 +137,8 @@ namespace FashionVote.Controllers
             TempData["SuccessMessage"] = "Participant deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
+
+
 
         /// <summary>
         /// Displays the details of a participant (Accessible to all authenticated users).

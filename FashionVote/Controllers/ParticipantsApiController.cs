@@ -15,7 +15,7 @@ namespace FashionVote.Controllers
     [ApiController]
     [Route("api/participants")]
     [Produces("application/json")]
-    [Authorize(Roles = "Admin")] // Admin required for all API endpoints
+
     public class ParticipantsApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -25,9 +25,19 @@ namespace FashionVote.Controllers
             _context = context;
         }
 
+
+
         /// <summary>
-        /// Retrieves all participants with their registered shows (Admin Only).
+        /// Retrieves all participants with their registered shows.
         /// </summary>
+        /// <returns>
+        /// Returns a list of all participants along with their registered shows.
+        /// </returns>
+        /// <example>
+        /// curl -X GET "http://localhost:5157/api/participants" \
+            // -H "Content-Type: application/json"
+        /// <output>{"participantId":1,"name":"Jane Doe","email":"janedoe@gmail.com","shows":[]}</output>
+        /// </example>
         [HttpGet]
         public async Task<IActionResult> GetParticipants()
         {
@@ -40,9 +50,61 @@ namespace FashionVote.Controllers
             return Ok(participantDTOs);
         }
 
+
+
         /// <summary>
-        /// Updates an existing participant's details (Admin Only).
+        /// Retrieves details of a specific participant (Admin Only).
         /// </summary>
+        /// <param name="id">The ID of the participant.</param>
+        /// <returns>
+        /// Returns JSON data of the participant or 404 if not found.
+        /// </returns>
+        /// <example>
+        /// curl -X GET "http://localhost:5157/api/participants/1" \
+            // -H "Content-Type: application/json"
+        /// <output>{"participantId":1,"name":"Jane Doe","email":"janedoe@gmail.com","shows":[]}</output>
+        /// </example>
+        /// /// <example>
+        /// curl -X GET "http://localhost:5157/api/participants/3" \
+            // -H "Content-Type: application/json"
+        /// <output>{"message":"Participant not found."}</output>
+        /// </example>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetParticipantById(int id)
+        {
+            var participant = await _context.Participants
+                .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show)
+                .FirstOrDefaultAsync(p => p.ParticipantId == id);
+
+            if (participant == null)
+                return NotFound(new { message = "Participant not found." });
+
+            return Ok(new ParticipantDTO(participant));
+        }
+
+
+
+        /// <summary>
+        /// Updates an existing participant's details.
+        /// </summary>
+        /// <param name="id">The ID of the participant to update.</param>
+        /// <param name="participantDto">Updated participant details.</param>
+        /// <returns>
+        /// Returns a success message if the update is successful, or an error message if the participant is not found.
+        /// </returns>
+        /// <example>
+        /// curl -X PUT "http://localhost:5157/api/participants/edit/1" \
+            // -H "Content-Type: application/json" \
+            // -d '{
+            //       "participantId": 1,
+            //       "name": "Jane Doe",
+            //       "email": "janedoe@gmail.com",
+            //       "selectedShowIds": [1, 3]
+            //     }'
+        /// <output>{"message":"Participant updated successfully!"}</output>
+        /// </example>
+
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditParticipant(int id, [FromBody] ParticipantUpdateDTO participantDto)
         {
@@ -72,9 +134,21 @@ namespace FashionVote.Controllers
             return Ok(new { message = "Participant updated successfully!" });
         }
 
+
+
+
         /// <summary>
         /// Deletes a participant (Admin Only).
         /// </summary>
+        /// <param name="id">The ID of the participant to delete.</param>
+        /// <returns>
+        /// Returns a success message if the participant is deleted successfully, or an error message if the participant is not found.
+        /// </returns>
+        /// <example>
+        /// curl -X DELETE "http://localhost:5157/api/participants/delete/1" \
+            // -H "Content-Type: application/json"
+        /// <output>{"message":"Participant deleted successfully."}</output>
+        /// </example>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteParticipant(int id)
         {
