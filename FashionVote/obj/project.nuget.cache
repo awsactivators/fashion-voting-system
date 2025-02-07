@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "tl2d7g9ssQ0=",
+  "dgSpecHash": "4D2oTKR8MnU=",
   "success": true,
   "projectFilePath": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/FashionVote.csproj",
   "expectedPackageFiles": [
@@ -100,6 +100,7 @@
     "/Users/Genevieve/.nuget/packages/microsoft.extensions.options/8.0.2/microsoft.extensions.options.8.0.2.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/microsoft.net.stringtools/17.8.3/microsoft.net.stringtools.17.8.3.nupkg.sha512",
+    "/Users/Genevieve/.nuget/packages/microsoft.openapi/1.6.22/microsoft.openapi.1.6.22.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/microsoft.visualstudio.web.codegeneration/8.0.7/microsoft.visualstudio.web.codegeneration.8.0.7.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/microsoft.visualstudio.web.codegeneration.core/8.0.7/microsoft.visualstudio.web.codegeneration.core.8.0.7.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/microsoft.visualstudio.web.codegeneration.design/8.0.7/microsoft.visualstudio.web.codegeneration.design.8.0.7.nupkg.sha512",
@@ -123,6 +124,9 @@
     "/Users/Genevieve/.nuget/packages/sqlitepclraw.core/2.1.6/sqlitepclraw.core.2.1.6.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.6/sqlitepclraw.lib.e_sqlite3.2.1.6.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.6/sqlitepclraw.provider.e_sqlite3.2.1.6.nupkg.sha512",
+    "/Users/Genevieve/.nuget/packages/swashbuckle.aspnetcore.swagger/7.2.0/swashbuckle.aspnetcore.swagger.7.2.0.nupkg.sha512",
+    "/Users/Genevieve/.nuget/packages/swashbuckle.aspnetcore.swaggergen/7.2.0/swashbuckle.aspnetcore.swaggergen.7.2.0.nupkg.sha512",
+    "/Users/Genevieve/.nuget/packages/swashbuckle.aspnetcore.swaggerui/7.2.0/swashbuckle.aspnetcore.swaggerui.7.2.0.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/system.codedom/5.0.0/system.codedom.5.0.0.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/system.collections.immutable/7.0.0/system.collections.immutable.7.0.0.nupkg.sha512",
     "/Users/Genevieve/.nuget/packages/system.composition/7.0.0/system.composition.7.0.0.nupkg.sha512",

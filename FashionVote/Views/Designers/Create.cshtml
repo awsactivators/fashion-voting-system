@@ -1,4 +1,4 @@
-@model FashionVote.Models.Designer
+@model FashionVote.Models.DTOs.DesignerCreateDTO
 
 @{
     ViewData["Title"] = "Add Designer";
@@ -16,7 +16,7 @@
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
 
-<form asp-controller="Designers" asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-controller="Designers" asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Name">Name</label>
         <input asp-for="Name" class="form-control" required />
@@ -29,10 +29,9 @@
         <span asp-validation-for="Category" class="text-danger"></span>
     </div>
 
-    <!-- Select Shows to Assign the Designer -->
     <div class="form-group">
         <label>Assign to Shows</label>
-        <select name="SelectedShowIds" multiple class="form-control">
+        <select asp-for="SelectedShowIds" multiple class="form-control">
             @foreach (var show in ViewBag.Shows)
             {
                 <option value="@show.ShowId">@show.ShowName - @show.Location</option>

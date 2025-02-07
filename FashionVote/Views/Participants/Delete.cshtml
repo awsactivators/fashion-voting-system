@@ -5,18 +5,35 @@
 
 <h1>Delete Participant</h1>
 
-<div>
-    <h3>Are you sure you want to delete this participant?</h3>
-    <div>
-        <strong>Name:</strong> @Model.Name<br />
-        <strong>Email:</strong> @Model.Email<br />
-        <strong>Registered At:</strong> @Model.RegisteredAt.ToString("g")<br />
-        <strong>Show:</strong> @Model.Show?.ShowName
-    </div>
-
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="ParticipantId" />
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </form>
+<div class="alert alert-warning">
+    <h4>Are you sure you want to delete this participant?</h4>
 </div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title"><strong>Name:</strong> @Model.Name</h5>
+        <p class="card-text"><strong>Email:</strong> @Model.Email</p>
+        <p class="card-text"><strong>Registered At:</strong> @Model.RegisteredAt.ToString("g")</p>
+
+        <h6>Registered Shows:</h6>
+        <ul>
+            @if (Model.ParticipantShows != null && Model.ParticipantShows.Any())
+            {
+                @foreach (var ps in Model.ParticipantShows)
+                {
+                    <li>@ps.Show.ShowName (@ps.Show.Location)</li>
+                }
+            }
+            else
+            {
+                <span class="text-muted">No shows registered</span>
+            }
+        </ul>
+    </div>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="ParticipantId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

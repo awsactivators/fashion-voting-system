@@ -1,14 +1,36 @@
-using System;
-using FashionVote.Models;
+// using System;
+// using FashionVote.Models;
 
-namespace FashionVote.DTOs
+// namespace FashionVote.DTOs
+// {
+//     public class DesignerUpdateDTO
+//     {
+//         public int DesignerId { get; set; } // Required for updates
+//         public string Name { get; set; }
+//         public string Category { get; set; }
+//         public int[] SelectedShowIds { get; set; }
+//     }
+
+// }
+
+
+using System.ComponentModel.DataAnnotations;
+
+namespace FashionVote.Models.DTOs
 {
     public class DesignerUpdateDTO
     {
-        public int DesignerId { get; set; } // Required for updates
-        public string Name { get; set; }
-        public string Category { get; set; }
-        public int[] SelectedShowIds { get; set; }
-    }
+        [Required]
+        public int DesignerId { get; set; }
 
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Category { get; set; }
+
+        public List<int>? SelectedShowIds { get; set; }
+    }
 }

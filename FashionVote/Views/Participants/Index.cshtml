@@ -14,17 +14,13 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-@* <p>
-    <a asp-action="Create" class="btn btn-primary">Add Participant</a>
-</p> *@
-
-<table class="table">
-    <thead>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
         <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Registered At</th>
-            <th>Show</th>
+            <th>Shows Registered</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -35,7 +31,21 @@
                 <td>@participant.Name</td>
                 <td>@participant.Email</td>
                 <td>@participant.RegisteredAt.ToString("g")</td>
-                <td>@participant.Show?.ShowName</td>
+                <td>
+                    @if (participant.ParticipantShows != null && participant.ParticipantShows.Any())
+                    {
+                        <ul>
+                            @foreach (var ps in participant.ParticipantShows)
+                            {
+                                <li>@ps.Show.ShowName (@ps.Show.Location)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No shows registered</span>
+                    }
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@participant.ParticipantId" class="btn btn-warning btn-sm">Edit</a>
                     <a asp-action="Delete" asp-route-id="@participant.ParticipantId" class="btn btn-danger btn-sm">Delete</a>

@@ -15,10 +15,9 @@
         <h5 class="card-title">@Model.Name</h5>
         <p class="card-text"><strong>Category:</strong> @Model.Category</p>
 
-        <!-- Display Shows the Designer is Participating In -->
         <h6>Participating Shows:</h6>
         <ul>
-            @if (Model.DesignerShows != null && Model.DesignerShows.Any())
+            @if (Model.DesignerShows?.Any() == true)
             {
                 @foreach (var ds in Model.DesignerShows)
                 {
@@ -33,10 +32,8 @@
     </div>
 </div>
 
-<form asp-action="Delete" method="post">
+<form asp-controller="Designers" asp-action="DeleteConfirmed" method="post">
     <input type="hidden" asp-for="DesignerId" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
-
-

@@ -14,9 +14,9 @@
         <strong>End Time:</strong> @Model.EndTime.ToString("g")<br />
     </div>
 
-    <form asp-action="Delete" method="post">
+    <form asp-action="DeleteConfirmed" method="post">
         <input type="hidden" asp-for="ShowId" />
-        <button type="submit" asp-action="Delete"class="btn btn-danger">Delete</button>
+        <button type="submit" class="btn btn-danger">Delete</button>
          <a asp-action="AdminIndex" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
