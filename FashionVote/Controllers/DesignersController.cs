@@ -104,8 +104,17 @@ namespace FashionVote.Controllers
 
             if (designer == null) return NotFound();
 
-            ViewBag.ShowList = new MultiSelectList(_context.Shows, "ShowId", "ShowName", designer.DesignerShows.Select(ds => ds.ShowId));
-            return View(designer);
+            // Convert Designer to DesignerUpdateDTO
+            var designerDto = new DesignerUpdateDTO
+            {
+                DesignerId = designer.DesignerId,
+                Name = designer.Name,
+                Category = designer.Category,
+                SelectedShowIds = designer.DesignerShows.Select(ds => ds.ShowId).ToList()
+            };
+
+            ViewBag.ShowList = new MultiSelectList(_context.Shows, "ShowId", "ShowName", designerDto.SelectedShowIds);
+            return View(designerDto); 
         }
 
         /// <summary>
