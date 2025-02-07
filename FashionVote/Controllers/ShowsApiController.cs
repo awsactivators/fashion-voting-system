@@ -196,22 +196,42 @@ namespace FashionVote.Controllers.Api
         [HttpPost("register/{showId}")]
         public async Task<IActionResult> Register(int showId)
         {
-            var userEmail = "luisdoe@gmail.com";
+            var userEmail = "luisdoe@gmail.com"; 
             var participant = await _context.Participants
                 .Include(p => p.ParticipantShows)
+                .ThenInclude(ps => ps.Show) 
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
-            if (participant == null) return BadRequest("Only registered participants can register for shows.");
-            if (participant.ParticipantShows.Any(ps => ps.ShowId == showId)) return BadRequest("Already registered.");
+            if (participant == null)
+                return BadRequest("Only registered participants can register for shows.");
 
-            var show = await _context.Shows.FindAsync(showId);
-            if (show == null) return NotFound("Show does not exist.");
+            // Check if already registered for this show
+            if (participant.ParticipantShows.Any(ps => ps.ShowId == showId))
+                return BadRequest("Already registered.");
 
-            _context.ParticipantShows.Add(new ParticipantShow { ParticipantId = participant.ParticipantId, ShowId = showId });
+            var newShow = await _context.Shows.FindAsync(showId);
+            if (newShow == null)
+                return NotFound("Show does not exist.");
+
+            // Check for time conflicts
+            var hasTimeConflict = participant.ParticipantShows
+                .Any(ps => ps.Show.StartTime < newShow.EndTime && ps.Show.EndTime > newShow.StartTime);
+
+            if (hasTimeConflict)
+                return BadRequest("You are already registered for a show with a time conflict.");
+
+            // Register for the new show
+            _context.ParticipantShows.Add(new ParticipantShow
+            {
+                ParticipantId = participant.ParticipantId,
+                ShowId = showId
+            });
+
             await _context.SaveChangesAsync();
 
             return Ok("Successfully registered.");
         }
+
 
 
 
