@@ -408,3 +408,8 @@
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Swashbuckle.AspNetCore.Swagger.dll
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Microsoft.Extensions.Diagnostics.Abstractions.dll
+/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll
+/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
+/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/Microsoft.Extensions.ObjectPool.dll
+/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/bin/Debug/net8.0/System.Net.WebSockets.WebSocketProtocol.dll

@@ -33,6 +33,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddSignalR();
+
+
 var app = builder.Build();
 
 // Seed Roles and Admin User on Startup
@@ -92,5 +95,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<FashionVote.Hubs.VoteHub>("/voteHub");
+    endpoints.MapControllers();
+});
 
 app.Run();

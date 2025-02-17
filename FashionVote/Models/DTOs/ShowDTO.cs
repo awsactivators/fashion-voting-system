@@ -1,4 +1,5 @@
 using System;
+using FashionVote.Models; 
 
 namespace FashionVote.Models.DTOs
 {

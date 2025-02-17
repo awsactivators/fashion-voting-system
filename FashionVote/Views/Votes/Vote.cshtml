@@ -31,57 +31,95 @@
 else
 {
     <form asp-action="SubmitVote" asp-controller="Votes" method="post">
-    <input type="hidden" name="ShowId" value="@Model.ShowId" /> 
+        <input type="hidden" name="ShowId" value="@Model.ShowId" /> 
     
-    <table class="table table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th>Designer</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Vote</th>
-                <th>Unvote</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var designerShow in Model.DesignerShows)
-            {
-                var hasVoted = Model.Votes.Any(v => v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
-
+        <table class="table table-bordered">
+            <thead class="thead-dark">
                 <tr>
-                    <td>@designerShow.Designer.Name</td>
-                    <td>@designerShow.Designer.Category</td>
-                    <td>
-                        @if (hasVoted)
-                        {
-                            <span class="badge bg-success">Voted</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-warning">Not Voted</span>
-                        }
-                    </td>
-                    <td>
-                        <input type="checkbox" name="DesignerIds" value="@designerShow.DesignerId" @(hasVoted ? "disabled" : "") />
-                    </td>
-                    <td>
-                        @if (hasVoted)
-                        {
-                            <form asp-action="Unvote" asp-controller="Votes" method="post" style="display:inline;">
-                                <input type="hidden" name="ShowId" value="@Model.ShowId" />
-                                <input type="hidden" name="DesignerId" value="@designerShow.DesignerId" />
-                                <button type="submit" class="btn btn-danger btn-sm">Unvote</button>
-                            </form>
-                        }
-                    </td>
+                    <th>Designer</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Vote Count</th>
+                    <th>Vote</th>
+                    <th>Unvote</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="voteTable">
+                @foreach (var designerShow in Model.DesignerShows)
+                {
+                    var hasVoted = Model.Votes != null && Model.Votes.Any(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
+                    var voteCount = Model.Votes != null ? Model.Votes.Count(v => v.DesignerId == designerShow.DesignerId) : 0;
+
+                    <tr id="row-@designerShow.DesignerId">
+                        <td>@designerShow.Designer.Name</td>
+                        <td>@designerShow.Designer.Category</td>
+                        <td id="voteStatus-@designerShow.DesignerId">
+                            @if (hasVoted)
+                            {
+                                <span class="badge bg-success">Voted</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Not Voted</span>
+                            }
+                        </td>
+                        <td id="voteCount-@designerShow.DesignerId"> 
+                            @voteCount
+                        </td>
+                        <td>
+                            <input type="checkbox" name="DesignerIds" value="@designerShow.DesignerId" @(hasVoted ? "disabled" : "") />
+                        </td>
+                        <td>
+                            @if (hasVoted)
+                            {
+                                <form asp-action="Unvote" asp-controller="Votes" method="post" class="unvote-form" data-designer-id="@designerShow.DesignerId">
+                                    <input type="hidden" name="ShowId" value="@Model.ShowId" />
+                                    <input type="hidden" name="DesignerId" value="@designerShow.DesignerId" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Unvote</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     
-    <button type="submit" class="btn btn-primary">Submit Votes</button>
+        <button type="submit" class="btn btn-primary">Submit Votes</button>
     </form>
 }
 <a asp-action="MyShows" asp-controller="Shows" class="btn btn-secondary">Back to My Shows</a> 
 
 
+<script>
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("/voteHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    connection.start().catch(function (err) {
+        console.error(err.toString());
+    });
+
+    connection.on("ReceiveVoteUpdate", function (showId) {
+        updateVoteCounts(showId);
+    });
+
+    function updateVoteCounts(showId) {
+        fetch(`/api/VotesApi/Vote/${showId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.designers.forEach(designer => {
+                    var voteStatus = document.getElementById(`voteStatus-${designer.designerId}`);
+                    if (voteCountElement) {
+                        voteCountElement.innerText = designer.voteCount; 
+                    }
+                    if (voteStatus) {
+                        voteStatus.innerHTML = designer.voteCount > 0 ? 
+                            `<span class="badge bg-success">Voted</span>` : 
+                            `<span class="badge bg-warning">Not Voted</span>`;
+                    }
+                });
+            })
+            .catch(error => console.error("Error updating votes:", error));
+    }
+</script>

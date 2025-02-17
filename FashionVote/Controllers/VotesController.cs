@@ -8,6 +8,8 @@ using FashionVote.DTOs;
 using System.Linq;
 using System.Threading.Tasks;
 using FashionVote.Models.DTOs;
+using FashionVote.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 
 namespace FashionVote.Controllers
@@ -107,6 +109,9 @@ namespace FashionVote.Controllers
                 return RedirectToAction("MyShows", "Shows");
             }
 
+            // Votes is Initialized to an Empty List if null
+            show.Votes ??= new List<Vote>();
+
             return View(show);
         }
 
@@ -118,7 +123,7 @@ namespace FashionVote.Controllers
         [HttpPost("SubmitVote")]
         [Authorize(Roles = "Participant")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitVote(int showId, List<int> DesignerIds)
+        public async Task<IActionResult> SubmitVote(int showId, List<int> DesignerIds, [FromServices] IHubContext<VoteHub> hubContext)
         {
             var userEmail = User.Identity.Name;
             var participant = await _context.Participants
@@ -155,8 +160,11 @@ namespace FashionVote.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            // Notify all clients about vote update
+            await hubContext.Clients.All.SendAsync("ReceiveVoteUpdate", showId);
+
             TempData["SuccessMessage"] = "Your vote has been submitted successfully!";
-            
             return RedirectToAction("Vote", new { showId });
         }
 
