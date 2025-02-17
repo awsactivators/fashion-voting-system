@@ -34,7 +34,7 @@ else
         <input type="hidden" name="ShowId" value="@Model.ShowId" /> 
     
         <table class="table table-bordered">
-            <thead class="thead-dark">
+            <thead class="thead-dark vote-thead">
                 <tr>
                     <th>Designer</th>
                     <th>Category</th>
@@ -84,7 +84,7 @@ else
             </tbody>
         </table>
     
-        <button type="submit" class="btn btn-primary">Submit Votes</button>
+        <button type="submit" class="btn btn-primary submit-vote">Submit Votes</button>
     </form>
 }
 <a asp-action="MyShows" asp-controller="Shows" class="btn btn-secondary">Back to My Shows</a> 

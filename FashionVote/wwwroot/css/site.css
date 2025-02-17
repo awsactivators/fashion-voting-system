@@ -1,4 +1,4 @@
-html {
+/* html {
   font-size: 14px;
 }
 
@@ -19,4 +19,167 @@ html {
 
 body {
   margin-bottom: 60px;
+} */
+
+
+/* General Page Styling */
+/* html {
+  font-size: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+} */
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #33605f;
+  color: #333;
+  margin: 0;
+  padding: 0;
+
+  font-size: 16px;
+  /* position: relative; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-row {
+  margin-bottom: 20px;
+}
+
+/* Headers */
+h1 {
+  color: #222;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+button, .btn {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.submit-vote, .register-show-btn, .explore-show-btn, .login-btn,
+.add-show, .add-designer {
+  background-color: #33605f !important;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #fff;
+  overflow: auto;
+  max-height: 80vh;
+}
+
+.vote-thead, .upcoming-show-thead, .show-thead,
+.participant-thead, .designer-thead, .vote-thead {
+  background-color: black !important;
+}
+
+.table thead {
+  background-color: #007bff;
+  color: white;
+}
+
+.table th, .table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Status Badges */
+.badge {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.badge.bg-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge.bg-warning {
+  background-color: #ffc107;
+  color: black;
+}
+
+/* Alert Messages */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.alert-info {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+  transform: scale(1.5);
+  margin: 5px;
+}
+
+/* Forms */
+
+.unvote-form {
+  display: inline;
 }
