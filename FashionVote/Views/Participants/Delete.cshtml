@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<form asp-action="DeleteConfirmed" method="post">
+<form asp-action="DeleteConfirmed" method="post" class="delete-participant">
     <input type="hidden" asp-for="ParticipantId" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>

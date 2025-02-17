@@ -132,6 +132,10 @@ button, .btn {
   margin-bottom: 15px;
 }
 
+.delete-participant {
+  margin-top: 15px;
+}
+
 /* Status Badges */
 .badge {
   padding: 5px 10px;
