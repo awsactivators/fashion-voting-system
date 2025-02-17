@@ -94,7 +94,7 @@ button, .btn {
 }
 
 .submit-vote, .register-show-btn, .explore-show-btn, .login-btn,
-.add-show, .add-designer {
+.add-show, .add-designer, .save-changes {
   background-color: #33605f !important;
 }
 
@@ -126,6 +126,10 @@ button, .btn {
 
 .table tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+.delete-show {
+  margin-bottom: 15px;
 }
 
 /* Status Badges */
@@ -182,4 +186,9 @@ input[type="checkbox"] {
 
 .unvote-form {
   display: inline;
+}
+
+.form-group {
+  margin-bottom: 15px;
+
 }
