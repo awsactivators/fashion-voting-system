@@ -4,9 +4,8 @@ body {
   color: #333;
   margin: 0;
   padding: 0;
-
+  min-height: 820px;
   font-size: 16px;
-  /* position: relative; */
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -159,12 +158,10 @@ input[type="checkbox"] {
 }
 
 /* Forms */
-
 .unvote-form {
   display: inline;
 }
 
 .form-group {
   margin-bottom: 15px;
-
 }
