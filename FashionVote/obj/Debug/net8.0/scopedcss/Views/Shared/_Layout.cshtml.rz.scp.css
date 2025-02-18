@@ -41,17 +41,12 @@ button.accept-policy[b-ls9gbb8chb] {
 
 .container[b-ls9gbb8chb] {
   flex: 1; 
-  /* display: flex;
-  flex-direction: column;
-  justify-content: flex-start; */
   max-width: 1200px;
   margin: auto;
   padding: 20px;
   background: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  /* flex-grow: 1;  */
-  /* flex: 1;  */
 }
 
 
@@ -63,7 +58,6 @@ footer[b-ls9gbb8chb] {
   width: 100%;
   white-space: nowrap;
   line-height: 30px;
-  /* position: absolute; */
   bottom: 0;
   left: 0;
   margin-top: 40px;

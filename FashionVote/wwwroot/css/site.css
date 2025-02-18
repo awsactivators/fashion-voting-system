@@ -65,8 +65,17 @@ button, .btn {
 }
 
 .submit-vote, .register-show-btn, .explore-show-btn, .login-btn,
-.add-show, .add-designer, .save-changes, .register-btn {
+.add-show, .add-designer, .save-changes, .register-btn,
+.view-designer, .view-votes, .view-show {
   background-color: #33605f !important;
+}
+
+.view-votes, .view-designer, .view-show {
+  color: white;
+}
+
+.edit-participant, .edit-designer {
+  background-color: #6c757d;
 }
 
 /* Table Styling */
