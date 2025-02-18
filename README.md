@@ -40,6 +40,28 @@ The **Fashion Voting System** is a back-end web application that allows particip
 
 ---
 
+## New Feature: Vote Count
+
+A **real-time vote count** feature has been implemented to provide participants and administrators with an updated tally of votes per designer. 
+
+### **How It Works**
+- **Participants** can now see the number of votes each designer has received before casting their own vote.
+- **Real-time Updates**: Once a vote is cast or removed, the vote count updates dynamically.
+- **Admin Dashboard**: Administrators can view total votes for each designer in a show.
+
+### **Updates in the UI**
+- The voting page now displays a **vote count column**, showing the total number of votes per designer.
+- The vote status updates instantly when a user submits or removes a vote.
+
+### **API Update**
+A new API endpoint has been added:
+- **Get Vote Count by Show**: 
+  ```http
+  GET /api/VotesApi/Vote/{showId}
+
+
+---
+
 ## Technologies Used
 
 - **ASP.NET Core MVC**: Backend framework for building the application.
