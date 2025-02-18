@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<form asp-controller="Designers" asp-action="Delete" method="post">
+<form asp-controller="Designers" asp-action="Delete" method="post" class="delete-designer">
     <input type="hidden" asp-for="DesignerId" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
