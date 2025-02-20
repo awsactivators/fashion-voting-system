@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "EFSUxkDUgLnoXMR51Nocb9BFzceSPo4pAvqNLHy5zTs=",
+  "Hash": "3D6KsykAkVL8wDUvE8GuRT8jEqXdxsrb+5/k6Xb2YCw=",
   "Source": "FashionVote",
   "BasePath": "_content/FashionVote",
   "Mode": "Default",
@@ -2335,12 +2335,12 @@
       "OriginalItemSpec": "wwwroot/lib/jquery/LICENSE.txt"
     },
     {
-      "Identity": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/d7a18964-b534-4cf9-8acf-e97ca194e401_IMG_8169.JPG",
+      "Identity": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/94b3f2b0-8d6b-474d-85b4-3db30d068a94_IMG_8169.JPG",
       "SourceId": "FashionVote",
       "SourceType": "Discovered",
       "ContentRoot": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/",
       "BasePath": "_content/FashionVote",
-      "RelativePath": "uploads/d7a18964-b534-4cf9-8acf-e97ca194e401_IMG_8169.JPG",
+      "RelativePath": "uploads/94b3f2b0-8d6b-474d-85b4-3db30d068a94_IMG_8169.JPG",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -2351,7 +2351,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/uploads/d7a18964-b534-4cf9-8acf-e97ca194e401_IMG_8169.JPG"
+      "OriginalItemSpec": "wwwroot/uploads/94b3f2b0-8d6b-474d-85b4-3db30d068a94_IMG_8169.JPG"
     }
   ]
 }
