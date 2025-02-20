@@ -84,21 +84,25 @@ else
                         <td>
                             @if (hasVoted)
                             {
-                                <form asp-action="UploadImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
-                                    <input type="hidden" name="voteId" value="@vote?.VoteId" />
-                                    <label for="imageUpload-@designerShow.DesignerId" style="cursor: pointer;">
-                                        <i class="fa fa-upload upload-icon" aria-hidden="true"></i>
-                                    </label>
-                                    <input type="file" id="imageUpload-@designerShow.DesignerId" name="imageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
-                                </form>
-
-                                @if (!string.IsNullOrEmpty(vote?.ImageUrl))
+                                @if (string.IsNullOrEmpty(vote?.ImageUrl))
                                 {
+                                    <!-- Show Upload Icon if No Image Exists -->
+                                    <form asp-action="UploadImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
+                                        <input type="hidden" name="voteId" value="@vote?.VoteId" />
+                                        <label for="imageUpload-@designerShow.DesignerId" style="cursor: pointer;">
+                                            <i class="fa fa-upload upload-icon" aria-hidden="true"></i>
+                                        </label>
+                                        <input type="file" id="imageUpload-@designerShow.DesignerId" name="imageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
+                                    </form>
+                                }
+                                else
+                                {
+                                    <!-- Display Uploaded Image -->
                                     <div style="margin-top: 10px;">
                                         <img src="@vote.ImageUrl" alt="Uploaded Outfit" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ccc;" />
-
+                                        
                                         <div style="margin-top: 10px;">
-                                            <!-- Update Image -->
+                                            <!-- Edit Image Icon -->
                                             <form asp-action="UpdateImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
                                                 <input type="hidden" name="voteId" value="@vote.VoteId" />
                                                 <label for="updateImage-@designerShow.DesignerId" style="cursor: pointer;">
@@ -107,7 +111,7 @@ else
                                                 <input type="file" id="updateImage-@designerShow.DesignerId" name="newImageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
                                             </form>
 
-                                            <!-- Delete Image -->
+                                            <!-- Delete Image Icon -->
                                             <form asp-action="DeleteImage" asp-controller="Votes" method="post" style="display: inline-block; margin-left: 10px;">
                                                 <input type="hidden" name="voteId" value="@vote.VoteId" />
                                                 <button type="submit" class="btn btn-danger btn-sm">
@@ -119,6 +123,7 @@ else
                                 }
                             }
                         </td>
+
 
                     </tr>
                 }

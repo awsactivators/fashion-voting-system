@@ -180,9 +180,19 @@ input[type="checkbox"] {
   font-size: 18px;
   color: #007bff;
   margin-right: 8px;
+  cursor: pointer;
+  border: 2px solid #33605f;
+  padding: 11px;
+  border-radius: 5px;
 }
 
 .upload-icon:hover, .edit-icon:hover {
   color: #0056b3;
   transition: 0.3s ease-in-out;
 }
+
+img {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+

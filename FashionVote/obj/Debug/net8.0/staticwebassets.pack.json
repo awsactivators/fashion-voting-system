@@ -245,6 +245,10 @@
       "PackagePath": "staticwebassets/lib/jquery/dist/jquery.min.map"
     },
     {
+      "Id": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/d7a18964-b534-4cf9-8acf-e97ca194e401_IMG_8169.JPG",
+      "PackagePath": "staticwebassets/uploads/d7a18964-b534-4cf9-8acf-e97ca194e401_IMG_8169.JPG"
+    },
+    {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.FashionVote.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
