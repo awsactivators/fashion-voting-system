@@ -10,7 +10,7 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" asp-controller="Shows" method="post">
     <div class="form-group">
         <label for="ShowName">Show Name</label>
         <input asp-for="ShowName" class="form-control" required/>

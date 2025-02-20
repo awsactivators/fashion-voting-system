@@ -30,11 +30,21 @@ namespace FashionVote.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto"); 
+            var utcNow = DateTime.UtcNow;
+
             var shows = await _context.Shows
                 .AsNoTracking()
-                .Where(s => s.EndTime > DateTime.UtcNow)
+                .Where(s => s.EndTime > utcNow)
                 .OrderBy(s => s.StartTime)
                 .ToListAsync();
+
+            // Convert UTC to local time
+            foreach (var show in shows)
+            {
+                show.StartTime = TimeZoneInfo.ConvertTimeFromUtc(show.StartTime, userTimeZone);
+                show.EndTime = TimeZoneInfo.ConvertTimeFromUtc(show.EndTime, userTimeZone);
+            }
 
             return View(shows);
         }
@@ -143,6 +153,20 @@ namespace FashionVote.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Show show)
         {
+            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto"); 
+            show.StartTime = TimeZoneInfo.ConvertTimeToUtc(show.StartTime, userTimeZone);
+            show.EndTime = TimeZoneInfo.ConvertTimeToUtc(show.EndTime, userTimeZone);
+
+            if (show.StartTime < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("StartTime", "The start time cannot be in the past.");
+            }
+
+            if (show.EndTime <= show.StartTime)
+            {
+                ModelState.AddModelError("EndTime", "The end time must be after the start time.");
+            }
+
             if (!ModelState.IsValid)
                 return View(show);
 
@@ -162,6 +186,13 @@ namespace FashionVote.Controllers
         {
             var show = await _context.Shows.FindAsync(id);
             if (show == null) return NotFound();
+
+            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto");
+
+            // Convert UTC to local time for displaying in the form
+            show.StartTime = TimeZoneInfo.ConvertTimeFromUtc(show.StartTime, userTimeZone);
+            show.EndTime = TimeZoneInfo.ConvertTimeFromUtc(show.EndTime, userTimeZone);
+
             return View(show);
         }
 
@@ -175,6 +206,23 @@ namespace FashionVote.Controllers
         public async Task<IActionResult> Edit(int id, [FromForm] Show show)
         {
             if (id != show.ShowId) return BadRequest();
+
+            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto");
+
+            // Convert local time to UTC before saving
+            show.StartTime = TimeZoneInfo.ConvertTimeToUtc(show.StartTime, userTimeZone);
+            show.EndTime = TimeZoneInfo.ConvertTimeToUtc(show.EndTime, userTimeZone);
+
+            if (show.StartTime < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("StartTime", "The start time cannot be in the past.");
+            }
+
+            if (show.EndTime <= show.StartTime)
+            {
+                ModelState.AddModelError("EndTime", "The end time must be after the start time.");
+            }
+
             if (!ModelState.IsValid) return View(show);
 
             _context.Update(show);
