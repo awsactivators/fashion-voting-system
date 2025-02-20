@@ -30,23 +30,29 @@ namespace FashionVote.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto"); 
-            var utcNow = DateTime.UtcNow;
 
+            var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto"); 
+
+            // Get all shows from the database without filtering
             var shows = await _context.Shows
                 .AsNoTracking()
-                .Where(s => s.EndTime > utcNow)
-                .OrderBy(s => s.StartTime)
                 .ToListAsync();
 
-            // Convert UTC to local time
+            // Convert UTC to local time before filtering
             foreach (var show in shows)
             {
                 show.StartTime = TimeZoneInfo.ConvertTimeFromUtc(show.StartTime, userTimeZone);
                 show.EndTime = TimeZoneInfo.ConvertTimeFromUtc(show.EndTime, userTimeZone);
             }
 
-            return View(shows);
+            // filter using the converted local time
+            var upcomingShows = shows
+                .Where(s => s.EndTime > DateTime.Now) 
+                .OrderBy(s => s.StartTime)
+                .ToList();
+
+            return View(upcomingShows);
+
         }
 
 

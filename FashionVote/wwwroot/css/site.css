@@ -174,3 +174,15 @@ input[type="checkbox"] {
 .form-group {
   margin-bottom: 15px;
 }
+
+
+.upload-icon, .edit-icon {
+  font-size: 18px;
+  color: #007bff;
+  margin-right: 8px;
+}
+
+.upload-icon:hover, .edit-icon:hover {
+  color: #0056b3;
+  transition: 0.3s ease-in-out;
+}

@@ -27,7 +27,7 @@
     <tbody>
         @foreach (var show in Model)
         {
-            var currentTime = DateTime.UtcNow;
+            @* var currentTime = DateTime.UtcNow; *@
             var isRegistered = show.ParticipantShows?.Any(ps => ps.Participant.Email == User.Identity.Name) ?? false;
 
             <tr>
@@ -44,7 +44,10 @@
                     }
                     else if (User.IsInRole("Participant"))
                     {
-                        if (DateTime.UtcNow > show.EndTime)
+                        // Convert the show's EndTime to local time for accurate comparison
+                        @* var localEndTime = TimeZoneInfo.ConvertTimeFromUtc(show.EndTime,            TimeZoneInfo.FindSystemTimeZoneById("America/Toronto")); *@
+        
+                        if (DateTime.Now > show.EndTime)
                         {
                             <span class="badge bg-danger">Event Passed</span>
                         }
@@ -61,8 +64,6 @@
                                 <input type="hidden" name="showId" value="@show.ShowId" />
                                 <button type="submit" class="btn btn-primary btn-sm register-show-btn">Register</button>
                             </form>
-
-
 
                         }
                     }

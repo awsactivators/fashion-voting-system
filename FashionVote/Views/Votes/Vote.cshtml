@@ -42,6 +42,7 @@ else
                     <th>Vote Count</th>
                     <th>Vote</th>
                     <th>Unvote</th>
+                    <th>Outfit Upload</th>
                 </tr>
             </thead>
             <tbody id="voteTable">
@@ -49,6 +50,7 @@ else
                 {
                     var hasVoted = Model.Votes != null && Model.Votes.Any(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
                     var voteCount = Model.Votes != null ? Model.Votes.Count(v => v.DesignerId == designerShow.DesignerId) : 0;
+                    var vote = Model.Votes?.FirstOrDefault(v => v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
 
                     <tr id="row-@designerShow.DesignerId">
                         <td>@designerShow.Designer.Name</td>
@@ -79,6 +81,45 @@ else
                                 </form>
                             }
                         </td>
+                        <td>
+                            @if (hasVoted)
+                            {
+                                <form asp-action="UploadImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
+                                    <input type="hidden" name="voteId" value="@vote?.VoteId" />
+                                    <label for="imageUpload-@designerShow.DesignerId" style="cursor: pointer;">
+                                        <i class="fa fa-upload upload-icon" aria-hidden="true"></i>
+                                    </label>
+                                    <input type="file" id="imageUpload-@designerShow.DesignerId" name="imageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
+                                </form>
+
+                                @if (!string.IsNullOrEmpty(vote?.ImageUrl))
+                                {
+                                    <div style="margin-top: 10px;">
+                                        <img src="@vote.ImageUrl" alt="Uploaded Outfit" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ccc;" />
+
+                                        <div style="margin-top: 10px;">
+                                            <!-- Update Image -->
+                                            <form asp-action="UpdateImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
+                                                <input type="hidden" name="voteId" value="@vote.VoteId" />
+                                                <label for="updateImage-@designerShow.DesignerId" style="cursor: pointer;">
+                                                    <i class="fa fa-pencil edit-icon" aria-hidden="true"></i>
+                                                </label>
+                                                <input type="file" id="updateImage-@designerShow.DesignerId" name="newImageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
+                                            </form>
+
+                                            <!-- Delete Image -->
+                                            <form asp-action="DeleteImage" asp-controller="Votes" method="post" style="display: inline-block; margin-left: 10px;">
+                                                <input type="hidden" name="voteId" value="@vote.VoteId" />
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </td>
+
                     </tr>
                 }
             </tbody>

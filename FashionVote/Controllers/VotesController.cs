@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using FashionVote.Models.DTOs;
 using FashionVote.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace FashionVote.Controllers
@@ -20,11 +22,13 @@ namespace FashionVote.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public VotesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public VotesController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -154,7 +158,8 @@ namespace FashionVote.Controllers
                         ParticipantId = participant.ParticipantId,
                         DesignerId = designerId,
                         ShowId = showId,
-                        VotedAt = DateTime.UtcNow
+                        VotedAt = DateTime.UtcNow,
+                        ImageUrl = null
                     });
                 }
             }
@@ -164,7 +169,7 @@ namespace FashionVote.Controllers
             // Notify all clients about vote update
             await hubContext.Clients.All.SendAsync("ReceiveVoteUpdate", showId);
 
-            TempData["SuccessMessage"] = "Your vote has been submitted successfully!";
+            TempData["SuccessMessage"] = "Your vote has been submitted successfully! You can now upload your outfit image.";
             return RedirectToAction("Vote", new { showId });
         }
 
@@ -200,12 +205,146 @@ namespace FashionVote.Controllers
                 return RedirectToAction("Vote", new { showId });
             }
 
+            // If an image is uploaded, delete the image file
+            if (!string.IsNullOrEmpty(vote.ImageUrl))
+            {
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, vote.ImageUrl.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
+
             _context.Votes.Remove(vote);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Your vote has been removed successfully!";
+            TempData["SuccessMessage"] = "Your vote has been removed successfully! Any uploaded image has also been deleted.";
             return RedirectToAction("Vote", new { showId });
         }
+
+
+        /// <summary>
+        /// Handles image upload for a participant after voting.
+        /// </summary>
+        [HttpPost("UploadImage")]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> UploadImage(int voteId, IFormFile imageFile)
+        {
+            var vote = await _context.Votes.FindAsync(voteId);
+            if (vote == null)
+            {
+                return NotFound();
+            }
+
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Please select a valid image.";
+                return RedirectToAction("Vote", new { showId = vote.ShowId });
+            }
+
+            string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            // Save the image
+            string fileName = $"{Guid.NewGuid()}_{imageFile.FileName}";
+            string filePath = Path.Combine(uploadFolder, fileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+
+            // Save image path in the database
+            vote.ImageUrl = $"/uploads/{fileName}";
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Image uploaded successfully!";
+            return RedirectToAction("Vote", new { showId = vote.ShowId });
+        }
+        
+
+        /// <summary>
+        /// Deletes an uploaded image.
+        /// </summary>
+        [HttpPost("DeleteImage")]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> DeleteImage(int voteId)
+        {
+            var vote = await _context.Votes.FindAsync(voteId);
+            if (vote == null || string.IsNullOrEmpty(vote.ImageUrl))
+            {
+                return NotFound();
+            }
+
+            string filePath = Path.Combine(_webHostEnvironment.WebRootPath, vote.ImageUrl.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            vote.ImageUrl = null;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Image deleted successfully!";
+            return RedirectToAction("Vote", new { showId = vote.ShowId });
+        }
+
+
+        /// <summary>
+        /// Update an uploaded image.
+        /// </summary>
+        [HttpPost("UpdateImage")]
+        [Authorize(Roles = "Participant")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateImage(int voteId, IFormFile newImageFile)
+        {
+            if (newImageFile == null || newImageFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Please select an image to upload.";
+                return RedirectToAction("Vote", new { showId = voteId });
+            }
+
+            var vote = await _context.Votes.FindAsync(voteId);
+            if (vote == null)
+            {
+                TempData["ErrorMessage"] = "Vote record not found.";
+                return RedirectToAction("Vote", new { showId = voteId });
+            }
+
+            // Process new image upload
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+            Directory.CreateDirectory(uploadsFolder);
+            
+            var uniqueFileName = $"{Guid.NewGuid()}_{newImageFile.FileName}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await newImageFile.CopyToAsync(fileStream);
+            }
+
+            // Delete the old image file if exists
+            if (!string.IsNullOrEmpty(vote.ImageUrl))
+            {
+                var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", vote.ImageUrl.TrimStart('/'));
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+            }
+
+            // Update the vote record with the new image URL
+            vote.ImageUrl = $"/uploads/{uniqueFileName}";
+            _context.Update(vote);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Image updated successfully!";
+            return RedirectToAction("Vote", new { showId = vote.ShowId });
+        }
+
 
     }
 }

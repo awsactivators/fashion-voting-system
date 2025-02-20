@@ -153,3 +153,7 @@ The database includes three primary tables with `1-M` and `M-M` relationships:
 <!-- scaffolding to show the account for login, register, logout: dotnet aspnet-codegenerator identity -dc FashionVote.Data.ApplicationDbContext -->
 
 <!-- curl -X "DELETE" -H "cookie: .AspNetCore.Identity.Application={token}" "https://localhost:xx/api/category/delete/2" -->
+
+<!-- 
+dotnet ef migrations add AddImageToVote
+dotnet ef database update -->

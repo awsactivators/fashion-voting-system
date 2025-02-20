@@ -19,5 +19,6 @@ namespace FashionVote.Models
         public Show Show { get; set; }
 
         public DateTime VotedAt { get; set; } = DateTime.UtcNow;
+        public string? ImageUrl { get; set; }
     }
 }
