@@ -59,7 +59,8 @@ else
                 {
                     var hasVoted = Model.Votes != null && Model.Votes.Any(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
                     var voteCount = Model.Votes != null ? Model.Votes.Count(v => v.DesignerId == designerShow.DesignerId) : 0;
-                    var vote = Model.Votes?.FirstOrDefault(v => v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
+                    var vote = Model.Votes?.FirstOrDefault(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId) ?? new Vote();
+
 
                     <tr id="row-@designerShow.DesignerId">
                         <td>@designerShow.Designer.Name</td>
@@ -83,7 +84,7 @@ else
                         <td>
                             @if (hasVoted)
                             {
-                                <form asp-action="Unvote" asp-controller="Votes" method="post" class="unvote-form" data-designer-id="@designerShow.DesignerId">
+                                <form asp-action="Unvote" asp-controller="Votes" method="post" class="unvote-form">
                                     <input type="hidden" name="ShowId" value="@Model.ShowId" />
                                     <input type="hidden" name="DesignerId" value="@designerShow.DesignerId" />
                                     <button type="submit" class="btn btn-danger btn-sm">Unvote</button>
@@ -93,7 +94,7 @@ else
                         <td>
                             @if (hasVoted)
                             {
-                                @if (string.IsNullOrEmpty(vote?.ImageUrl))
+                                @if (vote != null && string.IsNullOrEmpty(vote.ImageUrl))
                                 {
                                     <!-- Show Upload Icon if No Image Exists -->
                                     <form asp-action="UploadImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
@@ -104,7 +105,7 @@ else
                                         <input type="file" id="imageUpload-@designerShow.DesignerId" name="imageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
                                     </form>
                                 }
-                                else
+                                else if (vote != null)
                                 {
                                     <!-- Display Uploaded Image -->
                                     <div style="margin-top: 10px;">

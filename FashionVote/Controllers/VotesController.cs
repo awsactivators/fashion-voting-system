@@ -94,6 +94,7 @@ namespace FashionVote.Controllers
             var participant = await _context.Participants
                 .Include(p => p.ParticipantShows)
                 .ThenInclude(ps => ps.Show)
+                .Include(p => p.Votes)
                 .FirstOrDefaultAsync(p => p.Email == userEmail);
 
             if (participant == null || !participant.ParticipantShows.Any(ps => ps.ShowId == showId))
@@ -142,9 +143,11 @@ namespace FashionVote.Controllers
 
             if (DesignerIds == null || !DesignerIds.Any())
             {
-                TempData["ErrorMessage"] = "You must vote for at least one designer.";
-                return RedirectToAction("Vote", new { showId });
+                TempData["ErrorMessage"] = "You didnt vote for any designer.";
+                return RedirectToAction("MyShows", "Shows");
             }
+
+            Console.WriteLine($"Submitting vote for Show: {showId}, Participant: {participant.ParticipantId}");
 
             foreach (var designerId in DesignerIds)
             {
@@ -153,6 +156,7 @@ namespace FashionVote.Controllers
 
                 if (existingVote == null)
                 {
+                    Console.WriteLine($"Adding new vote: DesignerId={designerId}");
                     _context.Votes.Add(new Vote
                     {
                         ParticipantId = participant.ParticipantId,
@@ -204,6 +208,8 @@ namespace FashionVote.Controllers
                 TempData["ErrorMessage"] = "No vote found to remove.";
                 return RedirectToAction("Vote", new { showId });
             }
+
+            Console.WriteLine($"Removing vote: DesignerId={designerId}, ShowId={showId}, ParticipantId={participant.ParticipantId}");
 
             // If an image is uploaded, delete the image file
             if (!string.IsNullOrEmpty(vote.ImageUrl))
