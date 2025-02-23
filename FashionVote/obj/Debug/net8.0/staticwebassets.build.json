@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "WSCkRIonkoeptJsWi42WrC33MhiT7tqQdbi8tBqNdl8=",
+  "Hash": "Uw7jU6mF6HmGrgJF5m04niz1/NoNJQPTshkNJ1NkiCA=",
   "Source": "FashionVote",
   "BasePath": "_content/FashionVote",
   "Mode": "Default",
@@ -2352,6 +2352,44 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/uploads/2f46665e-388f-4417-aa08-f204e309ea08_IMG_8169.JPG"
+    },
+    {
+      "Identity": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG",
+      "SourceId": "FashionVote",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/",
+      "BasePath": "_content/FashionVote",
+      "RelativePath": "uploads/4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG"
+    },
+    {
+      "Identity": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG",
+      "SourceId": "FashionVote",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/",
+      "BasePath": "_content/FashionVote",
+      "RelativePath": "uploads/97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG"
     }
   ]
 }

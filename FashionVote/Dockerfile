@@ -26,6 +26,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app .
 
+# Copy the database to a writable location inside the container
+RUN cp /app/app.db /tmp/app.db
+
+# Set the connection string for the database in the writable location
+ENV ConnectionStrings__DefaultConnection "DataSource=/tmp/app.db;Cache=Shared"
+
+
 # Expose port
 EXPOSE 8099
 

@@ -41,6 +41,12 @@ var app = builder.Build();
 // Seed Roles and Admin User on Startup
 using (var scope = app.Services.CreateScope())
 {
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+    // Apply any pending migrations automatically
+    dbContext.Database.Migrate();
+    
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 

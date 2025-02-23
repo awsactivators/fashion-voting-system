@@ -992,5 +992,37 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\2f46665e-388f-4417-aa08-f204e309ea08_IMG_8169.JPG))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG))">
+      <SourceType>Package</SourceType>
+      <SourceId>FashionVote</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/FashionVote</BasePath>
+      <RelativePath>uploads/4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG))">
+      <SourceType>Package</SourceType>
+      <SourceId>FashionVote</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/FashionVote</BasePath>
+      <RelativePath>uploads/97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG))</OriginalItemSpec>
+    </StaticWebAsset>
   </ItemGroup>
 </Project>

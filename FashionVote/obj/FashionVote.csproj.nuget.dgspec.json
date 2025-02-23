@@ -59,6 +59,10 @@
               "target": "Package",
               "version": "[1.2.0, )"
             },
+            "Microsoft.CodeAnalysis.Analyzers": {
+              "target": "Package",
+              "version": "[3.3.4, )"
+            },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[8.0.8, )"

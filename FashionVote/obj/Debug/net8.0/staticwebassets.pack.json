@@ -249,6 +249,14 @@
       "PackagePath": "staticwebassets/uploads/2f46665e-388f-4417-aa08-f204e309ea08_IMG_8169.JPG"
     },
     {
+      "Id": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG",
+      "PackagePath": "staticwebassets/uploads/4fea7c61-3b97-4879-8e74-b9fde1a0e56e_IMG_8169.JPG"
+    },
+    {
+      "Id": "/Users/Genevieve/Desktop/Web-Dev-Humber/winter-semester-2025/fashion-voting-system/FashionVote/wwwroot/uploads/97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG",
+      "PackagePath": "staticwebassets/uploads/97a6747c-8db9-4942-9b1a-f537d0e65f58_IMG_8169.JPG"
+    },
+    {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.FashionVote.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
