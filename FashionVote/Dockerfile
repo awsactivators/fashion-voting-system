@@ -36,11 +36,8 @@ ENV TZ=America/Toronto
 
 COPY --from=build /app .
 
-# Copy the database to a writable location inside the container
-RUN cp /app/app.db /tmp/app.db
-
 # Set the connection string for the database in the writable location
-ENV ConnectionStrings__DefaultConnection "DataSource=/tmp/app.db;Cache=Shared"
+ENV ConnectionStrings__DefaultConnection "DataSource=/app/app.db;Cache=Shared"
 
 # Expose port for the app
 EXPOSE 8099
