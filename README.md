@@ -157,3 +157,5 @@ The database includes three primary tables with `1-M` and `M-M` relationships:
 <!-- 
 dotnet ef migrations add AddImageToVote
 dotnet ef database update -->
+
+<!-- awav@g/luis@gmail.com Scof***_8, admin@fashionvote.com Admin@123 -->
