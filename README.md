@@ -159,3 +159,20 @@ dotnet ef migrations add AddImageToVote
 dotnet ef database update -->
 
 <!-- awav@g/luis@gmail.com Scof***_8, admin@fashionvote.com Admin@123 -->
+
+
+<!-- Remove old csproj referencing the new one which causes build run fail
+
+dotnet sln AdilBooks.sln remove WritersRunway/WritersRunway.csproj
+-->
+
+<!--
+  sqlite3 AdilBooks.db
+  .tables
+  SELECT Id, Email FROM AspNetUsers;
+  DELETE FROM AspNetUsers WHERE Email = 'user@example.com';
+  DELETE FROM AspNetUserRoles WHERE UserId = 'user-guid-id';
+  DELETE FROM Participants WHERE Email = 'user@example.com';
+  .quit
+
+ -->
