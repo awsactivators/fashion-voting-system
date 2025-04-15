@@ -12,26 +12,29 @@
 }
 else
 {
-    <table class="table">
-        <thead class="vote-thead">
-            <tr>
-                <th>Participant</th>
-                <th>Designer Voted</th>
-                <th>Show</th>
-                <th>Vote Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var vote in Model)
-            {
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="vote-thead">
                 <tr>
-                    <td>@vote.Participant.Name (@vote.Participant.Email)</td>
-                    <td>@vote.Designer.Name (@vote.Designer.Category)</td>
-                    <td>@vote.Show.ShowName</td>
-                    <td>@vote.VotedAt.ToString("g")</td>
+                    <th>Participant</th>
+                    <th>Designer Voted</th>
+                    <th>Show</th>
+                    <th>Vote Time</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var vote in Model)
+                {
+                    <tr>
+                        <td>@vote.Participant.Name (@vote.Participant.Email)</td>
+                        <td>@vote.Designer.Name (@vote.Designer.Category)</td>
+                        <td>@vote.Show.ShowName</td>
+                        <td>@vote.VotedAt.ToString("g")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
 }
 <a asp-controller="Shows" asp-action="Index" class="btn btn-secondary">Back to Shows</a>

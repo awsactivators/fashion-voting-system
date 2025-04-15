@@ -88,6 +88,13 @@ button, .btn {
   max-height: 80vh;
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
 .vote-thead, .upcoming-show-thead, .show-thead,
 .participant-thead, .designer-thead, .vote-thead {
   background-color: black !important;
@@ -196,3 +203,14 @@ img {
   border: 1px solid #ccc;
 }
 
+@media (max-width: 768px) {
+  .table th, .table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+}

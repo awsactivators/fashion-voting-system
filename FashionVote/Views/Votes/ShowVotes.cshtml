@@ -12,36 +12,38 @@
 }
 else
 {
-    <table class="table">
-        <thead class="vote-thead">
-            <tr>
-                <th>Designer</th>
-                <th>Category</th>
-                <th>Votes Received</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (ViewBag.DesignerVotes != null)
-            {
-                @foreach (FashionVote.Models.DTOs.DesignerVoteDTO dv in ViewBag.DesignerVotes)
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="vote-thead">
+                <tr>
+                    <th>Designer</th>
+                    <th>Category</th>
+                    <th>Votes Received</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.DesignerVotes != null)
+                {
+                    @foreach (FashionVote.Models.DTOs.DesignerVoteDTO dv in ViewBag.DesignerVotes)
+                    {
+                        <tr>
+                            <td>@dv.DesignerName</td>
+                            <td>@dv.Category</td>
+                            <td>@dv.VoteCount</td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td>@dv.DesignerName</td>
-                        <td>@dv.Category</td>
-                        <td>@dv.VoteCount</td>
+                        <td colspan="3" class="text-center text-muted">
+                            No votes have been recorded for this show.
+                        </td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="3" class="text-center text-muted">
-                        No votes have been recorded for this show.
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>    
 }
 
 <a asp-action="AdminIndex" asp-controller="Shows" class="btn btn-secondary">Back to Manage Shows</a>

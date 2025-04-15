@@ -17,31 +17,32 @@
 <p>
    <a asp-controller="Shows" asp-action="Create" class="btn btn-primary add-show">Add Show</a>
 </p>
-
-<table class="table">
-    <thead class="show-thead">
-        <tr>
-            <th>Show Name</th>
-            <th>Location</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var show in Model)
-        {
+<div class="table-responsive">
+    <table class="table">
+        <thead class="show-thead">
             <tr>
-                <td>@show.ShowName</td>
-                <td>@show.Location</td>
-                <td>@show.StartTime.ToString("g")</td>
-                <td>@show.EndTime.ToString("g")</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-controller="Shows" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
-                    <a asp-action="ShowVotes" asp-controller="Votes" asp-route-showId="@show.ShowId" class="btn btn-info btn-sm view-votes">View Votes</a>
-                </td>
+                <th>Show Name</th>
+                <th>Location</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var show in Model)
+            {
+                <tr>
+                    <td>@show.ShowName</td>
+                    <td>@show.Location</td>
+                    <td>@show.StartTime.ToString("g")</td>
+                    <td>@show.EndTime.ToString("g")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@show.ShowId" class="btn btn-secondary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-controller="Shows" asp-route-id="@show.ShowId" class="btn btn-danger btn-sm">Delete</a>
+                        <a asp-action="ShowVotes" asp-controller="Votes" asp-route-showId="@show.ShowId" class="btn btn-info btn-sm view-votes">View Votes</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

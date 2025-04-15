@@ -23,98 +23,99 @@
     </div>
 }
 else
-{
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Show Name</th>
-                <th>Location</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Voting Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var show in Model)
-            {
-                var currentTime = DateTime.UtcNow;
-                var timeUntilStart = show.StartTime - currentTime;
-                bool isVotingOpen = currentTime >= show.StartTime && currentTime <= show.EndTime;
-
+{   <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <td>@show.ShowName</td>
-                    <td>@show.Location</td>
-                    <td>@show.StartTime.ToString("g")</td>
-                    <td>@show.EndTime.ToString("g")</td>
+                    <th>Show Name</th>
+                    <th>Location</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Voting Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var show in Model)
+                {
+                    var currentTime = DateTime.UtcNow;
+                    var timeUntilStart = show.StartTime - currentTime;
+                    bool isVotingOpen = currentTime >= show.StartTime && currentTime <= show.EndTime;
 
-                    <!-- Voting Status -->
-                    <td>
-                        @if (currentTime < show.StartTime)
-                        {
-                            if (timeUntilStart.TotalMinutes < 5)
+                    <tr>
+                        <td>@show.ShowName</td>
+                        <td>@show.Location</td>
+                        <td>@show.StartTime.ToString("g")</td>
+                        <td>@show.EndTime.ToString("g")</td>
+
+                        <!-- Voting Status -->
+                        <td>
+                            @if (currentTime < show.StartTime)
                             {
-                                <span class="badge bg-warning" title="Voting starts soon">Voting starts soon</span>
+                                if (timeUntilStart.TotalMinutes < 5)
+                                {
+                                    <span class="badge bg-warning" title="Voting starts soon">Voting starts soon</span>
+                                }
+                                else if (timeUntilStart.TotalHours < 1)
+                                {
+                                    <span class="badge bg-warning">
+                                        Voting starts in @timeUntilStart.Minutes minutes
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">
+                                        Voting starts in @timeUntilStart.Hours hours, @timeUntilStart.Minutes minutes
+                                    </span>
+                                }
                             }
-                            else if (timeUntilStart.TotalHours < 1)
+                            else if (currentTime > show.EndTime)
                             {
-                                <span class="badge bg-warning">
-                                    Voting starts in @timeUntilStart.Minutes minutes
-                                </span>
+                                <span class="badge bg-danger">Voting Closed</span>
                             }
                             else
                             {
-                                <span class="badge bg-warning">
-                                    Voting starts in @timeUntilStart.Hours hours, @timeUntilStart.Minutes minutes
-                                </span>
+                                <span class="badge bg-success">Voting Open</span>
                             }
-                        }
-                        else if (currentTime > show.EndTime)
-                        {
-                            <span class="badge bg-danger">Voting Closed</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-success">Voting Open</span>
-                        }
-                    </td>
+                        </td>
 
-                    <!-- Actions (Vote, Unregister, Delete) -->
-                    <td>
-                        @if (currentTime < show.StartTime)
-                        {
-                            <!-- Unregister from upcoming show -->
-                            <form asp-controller="Shows" asp-action="Unregister" asp-route-showId="@show.ShowId" method="post">
-                                <button type="submit" class="btn btn-warning btn-sm">
-                                    Unregister
-                                </button>
-                            </form>
-                        }
-                        else if (currentTime > show.EndTime)
-                        {
-                            <!-- Delete past show -->
-                            <form asp-controller="Shows" asp-action="DeleteConfirmParticipant" asp-route-showId="@show.ShowId" method="post">
-                                <a asp-action="DeleteConfirmParticipant"
-                                  asp-controller="Shows"
-                                  asp-route-showId="@show.ShowId"
-                                  class="btn btn-danger btn-sm">
-                                    Delete
+                        <!-- Actions (Vote, Unregister, Delete) -->
+                        <td>
+                            @if (currentTime < show.StartTime)
+                            {
+                                <!-- Unregister from upcoming show -->
+                                <form asp-controller="Shows" asp-action="Unregister" asp-route-showId="@show.ShowId" method="post">
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        Unregister
+                                    </button>
+                                </form>
+                            }
+                            else if (currentTime > show.EndTime)
+                            {
+                                <!-- Delete past show -->
+                                <form asp-controller="Shows" asp-action="DeleteConfirmParticipant" asp-route-showId="@show.ShowId" method="post">
+                                    <a asp-action="DeleteConfirmParticipant"
+                                    asp-controller="Shows"
+                                    asp-route-showId="@show.ShowId"
+                                    class="btn btn-danger btn-sm">
+                                        Delete
+                                    </a>
+
+                                </form>
+                            }
+                            else
+                            {
+                                <!-- Vote -->
+                                <a asp-controller="Votes" asp-action="Vote" asp-route-showId="@show.ShowId" 
+                                class="btn btn-success btn-sm" title="Vote for your favorite designer">
+                                    Vote Now
                                 </a>
-
-                            </form>
-                        }
-                        else
-                        {
-                            <!-- Vote -->
-                            <a asp-controller="Votes" asp-action="Vote" asp-route-showId="@show.ShowId" 
-                               class="btn btn-success btn-sm" title="Vote for your favorite designer">
-                                Vote Now
-                            </a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 <a asp-action="Index" class="btn btn-secondary">Back to Upcoming Shows</a>

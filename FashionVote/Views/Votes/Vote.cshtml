@@ -5,6 +5,7 @@
 }
 
 <h1>Vote for Designers in @Model.ShowName</h1>
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
@@ -12,20 +13,6 @@
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
-
-@if (ViewData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@ViewData["SuccessMessage"]</div>
-}
-@if (ViewData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
-}
-@if (ViewData["InfoMessage"] != null)
-{
-    <div class="alert alert-info">@ViewData["InfoMessage"]</div>
 }
 
 <p>
@@ -39,9 +26,7 @@
 }
 else
 {
-    <form asp-action="SubmitVote" asp-controller="Votes" method="post">
-        <input type="hidden" name="ShowId" value="@Model.ShowId" /> 
-    
+    <div class="table-responsive">
         <table class="table table-bordered">
             <thead class="thead-dark vote-thead">
                 <tr>
@@ -54,15 +39,14 @@ else
                     <th>Outfit Upload</th>
                 </tr>
             </thead>
-            <tbody id="voteTable">
+            <tbody>
                 @foreach (var designerShow in Model.DesignerShows)
                 {
                     var hasVoted = Model.Votes != null && Model.Votes.Any(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
                     var voteCount = Model.Votes != null ? Model.Votes.Count(v => v.DesignerId == designerShow.DesignerId) : 0;
-                    var vote = Model.Votes?.FirstOrDefault(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId) ?? new Vote();
+                    var vote = Model.Votes?.FirstOrDefault(v => v.Participant != null && v.Participant.Email == User.Identity.Name && v.DesignerId == designerShow.DesignerId);
 
-
-                    <tr id="row-@designerShow.DesignerId">
+                    <tr>
                         <td>@designerShow.Designer.Name</td>
                         <td>@designerShow.Designer.Category</td>
                         <td id="voteStatus-@designerShow.DesignerId">
@@ -75,76 +59,87 @@ else
                                 <span class="badge bg-warning">Not Voted</span>
                             }
                         </td>
-                        <td id="voteCount-@designerShow.DesignerId"> 
-                            @voteCount
-                        </td>
+                        <td id="voteCount-@designerShow.DesignerId">@voteCount</td>
                         <td>
-                            <input type="checkbox" name="DesignerIds" value="@designerShow.DesignerId" @(hasVoted ? "disabled" : "") />
+                            @if (!hasVoted)
+                            {
+                                <form asp-action="SubmitVote" asp-controller="Votes" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="ShowId" value="@Model.ShowId" />
+                                    <input type="hidden" name="DesignerIds" value="@designerShow.DesignerId" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Vote</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary btn-sm" disabled>Voted</button>
+                            }
                         </td>
+
+
                         <td>
                             @if (hasVoted)
                             {
-                                <form asp-action="Unvote" asp-controller="Votes" method="post" class="unvote-form">
-                                    <input type="hidden" name="ShowId" value="@Model.ShowId" />
-                                    <input type="hidden" name="DesignerId" value="@designerShow.DesignerId" />
+                                <form asp-action="Unvote" asp-controller="Votes" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="showId" value="@Model.ShowId" />
+                                    <input type="hidden" name="designerId" value="@designerShow.DesignerId" />
                                     <button type="submit" class="btn btn-danger btn-sm">Unvote</button>
                                 </form>
                             }
                         </td>
                         <td>
-                            @if (hasVoted)
+                            @if (hasVoted && vote != null)
                             {
-                                @if (vote != null && string.IsNullOrEmpty(vote.ImageUrl))
+                                if (string.IsNullOrEmpty(vote.ImageUrl))
                                 {
-                                    <!-- Show Upload Icon if No Image Exists -->
                                     <form asp-action="UploadImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
-                                        <input type="hidden" name="voteId" value="@vote?.VoteId" />
+                                        <input type="hidden" name="voteId" value="@vote.VoteId" />
                                         <label for="imageUpload-@designerShow.DesignerId" style="cursor: pointer;">
                                             <i class="fa fa-upload upload-icon" aria-hidden="true"></i>
                                         </label>
-                                        <input type="file" id="imageUpload-@designerShow.DesignerId" name="imageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
+                                        <input type="file" id="imageUpload-@designerShow.DesignerId" name="imageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()" />
                                     </form>
                                 }
-                                else if (vote != null)
+                                else
                                 {
-                                    <!-- Display Uploaded Image -->
                                     <div style="margin-top: 10px;">
                                         <img src="@vote.ImageUrl" alt="Uploaded Outfit" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid #ccc;" />
-                                        
                                         <div style="margin-top: 10px;">
-                                            <!-- Edit Image Icon -->
                                             <form asp-action="UpdateImage" asp-controller="Votes" method="post" enctype="multipart/form-data" style="display: inline-block;">
                                                 <input type="hidden" name="voteId" value="@vote.VoteId" />
                                                 <label for="updateImage-@designerShow.DesignerId" style="cursor: pointer;">
                                                     <i class="fa fa-pencil edit-icon" aria-hidden="true"></i>
                                                 </label>
-                                                <input type="file" id="updateImage-@designerShow.DesignerId" name="newImageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()">
+                                                <input type="file" id="updateImage-@designerShow.DesignerId" name="newImageFile" accept="image/*" required style="display: none;" onchange="this.form.submit()" />
                                             </form>
-
-                                            <!-- Delete Image Icon -->
                                             <form asp-action="DeleteImage" asp-controller="Votes" method="post" style="display: inline-block; margin-left: 10px;">
                                                 <input type="hidden" name="voteId" value="@vote.VoteId" />
                                                 <button type="submit" class="btn btn-danger btn-sm">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </button>
                                             </form>
+
                                         </div>
                                     </div>
                                 }
                             }
                         </td>
-
-
                     </tr>
                 }
             </tbody>
         </table>
-    
-        <button type="submit" class="btn btn-primary submit-vote">Submit Votes</button>
-    </form>
+    </div>
+    @* <button type="submit" class="btn btn-primary">Submit Votes</button> *@
 }
-<a asp-action="MyShows" asp-controller="Shows" class="btn btn-secondary">Back to My Shows</a> 
 
+<a asp-action="MyShows" asp-controller="Shows" class="btn btn-secondary">Back to My Shows</a>
+
+<!-- In your _Layout.cshtml or at the top of your vote page -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
 <script>
     var connection = new signalR.HubConnectionBuilder()
@@ -166,12 +161,13 @@ else
             .then(data => {
                 data.designers.forEach(designer => {
                     var voteStatus = document.getElementById(`voteStatus-${designer.designerId}`);
+                    var voteCountElement = document.getElementById(`voteCount-${designer.designerId}`);
                     if (voteCountElement) {
-                        voteCountElement.innerText = designer.voteCount; 
+                        voteCountElement.innerText = designer.voteCount;
                     }
                     if (voteStatus) {
-                        voteStatus.innerHTML = designer.voteCount > 0 ? 
-                            `<span class="badge bg-success">Voted</span>` : 
+                        voteStatus.innerHTML = designer.voteCount > 0 ?
+                            `<span class="badge bg-success">Voted</span>` :
                             `<span class="badge bg-warning">Not Voted</span>`;
                     }
                 });

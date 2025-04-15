@@ -13,44 +13,45 @@
 {
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
-
-<table class="table table-bordered table-striped">
-    <thead class="thead-dark participant-thead">
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Registered At</th>
-            <th>Shows Registered</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var participant in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark participant-thead">
             <tr>
-                <td>@participant.Name</td>
-                <td>@participant.Email</td>
-                <td>@participant.RegisteredAt.ToString("g")</td>
-                <td>
-                    @if (participant.ParticipantShows != null && participant.ParticipantShows.Any())
-                    {
-                        <ul>
-                            @foreach (var ps in participant.ParticipantShows)
-                            {
-                                <li>@ps.Show.ShowName (@ps.Show.Location)</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No shows registered</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@participant.ParticipantId" class="btn btn-warning btn-sm edit-participant">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@participant.ParticipantId" class="btn btn-danger btn-sm">Delete</a>
-                </td>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Registered At</th>
+                <th>Shows Registered</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var participant in Model)
+            {
+                <tr>
+                    <td>@participant.Name</td>
+                    <td>@participant.Email</td>
+                    <td>@participant.RegisteredAt.ToString("g")</td>
+                    <td>
+                        @if (participant.ParticipantShows != null && participant.ParticipantShows.Any())
+                        {
+                            <ul>
+                                @foreach (var ps in participant.ParticipantShows)
+                                {
+                                    <li>@ps.Show.ShowName (@ps.Show.Location)</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No shows registered</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@participant.ParticipantId" class="btn btn-warning btn-sm edit-participant">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@participant.ParticipantId" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

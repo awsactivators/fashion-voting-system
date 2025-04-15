@@ -5,21 +5,23 @@
 
 <h1>Participants in @Model.ShowName</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var participant in Model.Participants)
-        {
+<div class="table-responsive">
+    <table class="table">
+        <thead>
             <tr>
-                <td>@participant.Name</td>
-                <td>@participant.Email</td>
+                <th>Name</th>
+                <th>Email</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var participant in Model.Participants)
+            {
+                <tr>
+                    <td>@participant.Name</td>
+                    <td>@participant.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 <a asp-action="Index" class="btn btn-secondary">Back to Shows</a>
